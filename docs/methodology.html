@@ -1,149 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Methodology — GEMSDOE38</title>
-<style>
-:root { --bg:#0f172a; --card:#1e293b; --accent:#38bdf8; --text:#e2e8f0; --muted:#94a3b8; }
-body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); margin:0; line-height:1.6; }
-.container { max-width:1000px; margin:0 auto; padding:0 1.5rem; }
-h1,h2,h3 { color:var(--accent); }
-.card { background:var(--card); border-radius:12px; padding:1.5rem; margin:1rem 0; border:1px solid #334155; }
-code { background:#334155; padding:0.2rem 0.4rem; border-radius:4px; }
-pre { background:#0f172a; padding:1rem; border-radius:8px; overflow-x:auto; border:1px solid #334155; }
-table { width:100%; border-collapse:collapse; margin:1rem 0; }
-th,td { border:1px solid #334155; padding:0.6rem; text-align:left; }
-th { background:#1e293b; color:var(--accent); }
-.badge { display:inline-block; padding:0.2rem 0.6rem; border-radius:999px; font-size:0.8rem; font-weight:600; }
-.badge-ok { background:#16a34a; color:white; }
-</style>
-</head>
-<body>
-<div class="container">
-<h1>Methodology — GEMSDOE38</h1>
-<p><a href="index.html">← Back</a></p>
-
-<div class="card">
-<h2>Metric — Distance-Weighted Tversky Index</h2>
-<p>From <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#performance-metric" target="_blank">official metric page</a>:</p>
-<pre>
-Let p(x) in [0,1] predicted, g(x) ground truth
-k(d) = max(1 - d/R, 0), R=300m = 3px at 100m
-
-TPw = sum_g max_{x:d(x,g)<=R} p(x) k(d(x,g))
-FPw = sum_{x:p(x)>0} p(x) [1 - max_g k(d(x,g))]
-FNw = sum_g [1 - max_{x:d(x,g)<=R} p(x) k(d(x,g))]
-
-DTI(alpha,beta) = TPw / (TPw + alpha*FPw + beta*FNw + eps)
-alpha=0.2, beta=0.8
-
-Worked example: TPw=3.00, FPw=1.89, FNw=2.00 -> DTI=3/(3+0.2*1.89+0.8*2)=0.60
-Verified in tests/test_metric.py
-</pre>
-<p>Key: every emitted pixel costs 0.2, earns at most 1. So thinning thick surface while keeping geometry raises credit per pixel. Break-even credit per dot ≈0.2*DTI ≈0.052 at 0.26 operating point (derived), 0.0548 measured empirically.</p>
-</div>
-
-<div class="card">
-<h2>MINE — Why Mutual Information, Not Ablation</h2>
-<p>Faults cover ~1% area (60,988 catalogue pixels = 1.18% of valid area, hidden ~0.24%). Holdout ablation — add feature, rerun, see if DTI moves — runs on so few positives that delta is noisy, easily mistaken for signal or nothing.</p>
-<p>Mutual information directly measures how much feature's value reduces uncertainty about true label, independent of whether any particular model exploits relationship well.</p>
-<p><strong>MINE estimator (Belghazi et al., ICML 2018)</strong>: <a href="https://arxiv.org/abs/1801.04062" target="_blank">https://arxiv.org/abs/1801.04062</a><br>
-DV representation: I(X;Y)=sup_T E_{p(x,y)}[T] - log E_{p(x)p(y)}[exp(T)]<br>
-T is neural network, trained to maximize lower bound. Works for high-dimensional continuous features.</p>
-<p>We compute MINE MI between each candidate feature and true label on <strong>full label set</strong> (not small holdout), use as far-less-noisy first-pass filter — near-zero MI unlikely to earn back submission slot no matter tuning.</p>
-
-<h3>Implementation</h3>
-<pre>
-class MINE(nn.Module):
-  net = Sequential(Linear(input_dim,128), ReLU, Linear(128,128), ReLU, Linear(128,1))
-  forward(x,y): concat and output T
-
-Training:
-  joint: (x,y) same index
-  marginal: shuffle y within batch -> p(x)p(y)
-  loss = - (mean(T_joint) - log(mean(exp(T_marg))))
-  optimizer Adam 1e-3, batch 512, epochs 100
-</pre>
-<p>See <code>src/mine_estimator.py</code></p>
-
-<h3>Results (synthetic GEMS-like, 1% positives)</h3>
-<pre>
-mt_conductance_edge: MI=0.04286 bits -> KEEP (highest)
-gravity_gradient_worm: MI=0.01028 -> KEEP
-aster_clay_ratio: MI=0.00199 -> DROP (near-zero)
-random_noise: MI=0.00024 -> DROP
-knickpoint_density: MI=0.00018 -> DROP
-</pre>
-<p>Top candidate MT edge passes filter.</p>
-</div>
-
-<div class="card">
-<h2>5 Hypotheses — Full Details</h2>
-
-<h3>1. H38-MT-CONDUCTANCE-EDGE (Rank 1, Expected +0.015 to +0.025, Cost Medium, MI 0.042, PASS 4/4 folds)</h3>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, verified GeoTIFF downloads and transparent validation."><title>Scientific review and results · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap article"><span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results and interpretations are separated. Negative results remain visible.</p><h2>Full-catalogue MINE estimates</h2><p>Natural-log units (nats), three seeds. OOF means are weighted by spatial-fold population. Null labels are globally permuted, not spatially preserved. These values describe catalogue labels, not hidden new-fault truth.</p><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Full-fit mean</th><th>Spatial OOF mean</th><th>Shuffled null</th></tr></thead><tbody><tr><td>A_quiet_persistent_magnetics</td><td>0.0000170</td><td>0.0000043</td><td>-0.0000004</td></tr><tr><td>B_depth_gravity_discordance</td><td>0.0000012</td><td>-0.0000216</td><td>-0.0000005</td></tr><tr><td>C_conductivity_residual_edge</td><td>0.0000166</td><td>0.0000091</td><td>-0.0000002</td></tr><tr><td>D_topographic_step_proxy</td><td>0.0001484</td><td>0.0001256</td><td>-0.0000003</td></tr></tbody></table></div><p><a href="evidence/mine-results.json">All seeds, folds, units and limitations</a></p><h1>Scientific review and decision record — 2026-10-05</h1>
+<h2>Answer: why did H33-2-B2 reach the reported 0.2778?</h2>
+<p><strong>Evidence separation.</strong> The user attributes 0.2778 to GEMSDOE32 H33-2-B2. The official leaderboard shows participant extradr19 at 0.2778, but does not expose the submitted filename or raster hash. The owner site still says “UNSCORED”. Thus the score-to-file mapping is <strong>user-reported</strong>, not independently organizer-verified. The live leaderboard leader is <strong>0.3262</strong>, ahead of 0.3222 and 0.3195, as checked on October 5.</p>
+<p><strong>What we can verify.</strong> We retrieved the H33 raster (SHA-256 in the submission manifest), reviewed its owner documentation and h33 source modules, and read the official metric and staff clarification. H33 retains sparse dots from a prior field and removes predictions within two pixels (200m) of the known catalogue. The official exclusion is <strong>pixel-exact</strong>, not a 200m buffer. Near-catalogue pixels are still penalized when far from new-fault truth; new truth may also occur near the catalogue. H33's wider buffer is an empirical heuristic, not an official rule.</p>
+<p><strong>Plausible mechanism, not a proven causal explanation.</strong> Sparse coverage avoids repeatedly paying false-positive mass where extra pixels give little additional maximum coverage of true faults. Removing catalogue-adjacent false positives can improve credit per prediction. It can also delete genuine splays and mapped-trace corrections. Hidden truth is unavailable, and the score sequence is not a randomized controlled comparison, so exact attribution to any geological feature is impossible.</p>
+<p>For truth count G, weighted coverage T and weighted false-positive mass F:</p>
+<p><code>D = T / (T + 0.2 F + 0.8(G-T)) = T / (0.2 T + 0.2 F + 0.8 G)</code>.</p>
+<p>A change improves D exactly when <code>(1 - 0.2 D) ΔT &gt; 0.2 D ΔF</code> (fixed truth set and positive denominators). This is the correct coupled condition; the old “each dot breaks even at 0.2 D” is only an approximation under additional assumptions. For a new unit of <em>false-positive</em> mass at D=0.2778, required additional coverage is about 0.05883. Do not confuse per-dot coverage with probability of a true pixel: one dot can cover multiple truth pixels.</p>
+<p><strong>Can we exceed 0.2778 / 0.3262?</strong> It is possible in principle; it is not demonstrated here. The ratio 0.3262/0.2778 is about 1.174, but a 17.4% score gain is NOT a proven 17.4% required gain in detector information or accuracy. DTI is nonlinear and the hidden distribution differs from the catalogue. Improving geological discrimination, localization, and nonredundant coverage is a sound route. Tuning a count or filename for uniqueness is not.</p>
+<h2>Scientific basis and distinct hypotheses</h2>
+<p>The four preregistered hypotheses, specific layers, signatures, missing-catalogue argument, falsifiers and qualitative opportunity/cost ranking are in <a href="evidence/hypotheses-preregistered.md">hypotheses-preregistered.md</a>. No numerical expected improvement was invented. All inputs are available in the measured 19-band mirror; no ASTER, InSAR or MT external volume was secretly simulated.</p>
+<p>USGS describes GeoDAWN magnetics as information about subsurface structure/geology and radiometrics as information about surface geology/soil composition. It records 400m flight-line spacing for Area 2 and variable terrain clearance. Therefore interpolation onto 100m cells does <strong>not</strong> imply 100m resolving power; east-west flight-line artifacts are a key negative control for the next session. <a href="https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and">USGS GeoDAWN</a>.</p>
+<p>A USGS Battle Mountain study jointly models gravity, magnetics and MT, and reports correspondence between gravity-derived basement and the base of shallow conductive anomalies. That supports testing multimodal structural constraints, but does not prove that every discordance or conductive edge is a fault. <a href="https://pubs.usgs.gov/publication/70271418">1</a>.</p>
+<p>Fault intersections and stepovers can concentrate geothermal fluid pathways; detailed structural characterization matters beyond merely recognizing a line on a raster. This motivates future geometry-aware tests, not a claim that our predicted dots are geothermal vents. <a href="https://www.osti.gov/servlets/purl/1110517">3</a>.</p>
+<h3>Official-source backlog, not implemented or assumed obtainable</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Verified public description / licence</th>
+<th>Obtained here?</th>
+<th>Next decision</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://doi.org/10.5066/P93LGLVQ">USGS GeoDAWN</a></td>
+<td>USGS release page identifies flight-line CSVs, grids, radiometric/magnetic data; CC0.</td>
+<td>Core competition mirror only; full raw survey not downloaded.</td>
+<td>Try line-level leveling/flight-height controls before treating narrow magnetic lineaments as faults.</td>
+</tr>
+<tr>
+<td><a href="https://gdr.openei.org/submissions/1391">GDR 1391</a></td>
+<td>Official public CC BY 4.0 compilation lists 2m temperatures, paleo features, wells/springs, seismicity and geodetics.</td>
+<td>Metadata inspected, external ZIP bytes not acquired in this run.</td>
+<td>Test provenance, coverage and well sampling bias before a spatial feature is proposed as ready.</td>
+</tr>
+<tr>
+<td><a href="https://doi.org/10.5066/P9TWT2LU">GDR MT conductance</a></td>
+<td>GDR describes five depth intervals from 2–200km.</td>
+<td>Not acquired here.</td>
+<td>Coarse depth conductance alone cannot resolve 100m surface fault traces. Do not call the surface band a new 3D MT survey.</td>
+</tr>
+<tr>
+<td><a href="https://www.usgs.gov/3d-elevation-program">USGS 3DEP</a></td>
+<td>Referenced by official GeoDAWN page as overlapping LiDAR acquisition.</td>
+<td>1m tiles not downloaded in this run.</td>
+<td>Next session prioritize selected validation blocks, tile footprints and independent scarp interpretation before region-wide training.</td>
+</tr>
+</tbody>
+</table>
+<p>Direct shell HTTPS to Dropbox and several official/raw-content hosts failed in this sandbox; verified GitHub API mirrors were obtainable. A public metadata page does not prove sandbox binary download availability. We did not propose any external-data-only idea as implementation-ready.</p>
+<h2>MINE: what was actually estimated</h2>
+<p>The original repository's five MI figures were synthetic examples, and its “bits (approx)” output used natural logs. They are withdrawn as geological evidence.</p>
+<p>The replacement is a 24-hidden-unit neural DV estimator implemented in NumPy with analytically tested backpropagation, bounded critic, Adam ascent, EMA denominator correction, and exact binary-label product marginal. Stratified minibatches are importance-weighted to <strong>natural</strong> catalogue prevalence, not an artificial 50/50 target. Each feature has three full-fit runs, three shuffled-label null fits, and twelve spatial-fold fits (three seeds × four quadrants). Full-fit evaluation visits <strong>all 5,167,373</strong> footprint rows, with <strong>60,988</strong> catalogue positives. Finite-step stochastic optimization samples from the entire training population but does not guarantee every row is seen during fitting.</p>
+<p>The catalogue entropy is about 0.064 nats; the exact value is recorded in <a href="evidence/mine-results.json">mine-results.json</a>. Estimates use nats throughout. Original <a href="https://proceedings.mlr.press/v80/belghazi18a.html">MINE</a> and <a href="https://proceedings.mlr.press/v97/poole19a.html">Poole et al. on bias/variance tradeoffs</a> justify caution: neural estimation is not a blanket promise of lower noise. These bounded, finite-capacity critics can miss real dependence. Negative DV estimates are optimization/generalization diagnostics, not negative true MI. Small marginal MI cannot exclude synergistic interactions (XOR is a standard counterexample), and a feature's MI does not quantify incremental information conditional on existing features.</p>
+<p>Full-label feature screening followed by testing selected features on those same validation labels would leak information. Consequently A was preregistered before MINE results and was tested unchanged. Results for B–D are descriptive research only; D needs a fresh nested/locked validation design. Four spatial-fold estimates are not a confidence interval. Globally shuffled null labels destroy spatial autocorrelation; these controls detect fitting artifacts, not spatial significance. The estimator normalizes using training-only samples, but unlabeled feature transforms use full-region statistics (transductive).</p>
+<h2>Real validation result and gate</h2>
+<p>Four geographic quadrants, 1km training-label buffer, fixed CPU HistGradientBoosting model, fixed 0.8% emission density and 2.8-cell spacing. Model: 19 measured bands vs 19 + A. All training positives plus up to 200,000 training negatives; no random geometric pseudo-labels. Class subsampling means model scores are ranks, not calibrated probabilities. The final output is a binary confidence decision.</p>
+<p>Pooled catalogue-proxy DTI: <strong>0.1314376800 → 0.1337092461</strong>, delta <strong>+0.0022715661</strong>. Only <strong>2/4</strong> folds improved. Paired 20km spatial-block bootstrap 95% interval: <strong>[-0.0012633735, +0.0070539140]</strong>, 180 blocks, 1,000 draws. This interval is conditional on fitted models; it omits model-refit uncertainty and is not a guarantee of independent blocks. Features with 900m Gaussian scale can retain dependency across the 1km training buffer.</p>
+<p><strong>FAIL. No slot promotion.</strong> No compatible independent “current holdout best” checkpoint existed here. The historical H33 raster used the full catalogue, so testing it on that catalogue is not an honest out-of-fold baseline. It would be especially misleading to claim success because H33's catalogue exclusion makes its catalogue DTI low. We explicitly do not make that comparison. The fresh baseline is a reproducible benchmark, not a reconstruction of the group's holdout best.</p>
+<p>The generated final candidate uses a full-data fit and a &gt;200m catalogue-distance exclusion before sparse packing. That final exclusion is not validated on the catalogue proxy (it removes the very positives being evaluated), so the final file has <strong>no validated hidden-fault score</strong>. No upload or competition slot was used.</p>
+<h2>Audit irregularities and limitations</h2>
+<ol>
+<li>Previous generator used random lines, a simulated catalogue and sine waves labeled “MT/ASTER”. Withdrawn downloads and hashes are recorded; history remains in Git.</li>
+<li>Previous holdout explicitly forced positive deltas. Replaced with real predictions and measured bootstrap uncertainty.</li>
+<li>Previous prepare script silently created a random footprint. Replaced with fail-closed template validation.</li>
+<li>Previous validator accepted NaN interiors using a <code>True</code> placeholder. Removed; sentinel, interior NaN, range, CRS, transform and outside rules have regression tests.</li>
+<li>The mirrored “example submission” contains all 60,988 catalogue positives; it is not the empty example described in official prose. Used ONLY for grid and footprint, never as model features. This is a provenance irregularity, not proof of organizer authenticity.</li>
+<li>Mirror SHA-256 agreement proves integrity against owner receipts, NOT independent organizer authentication. No DrivenData login session was available.</li>
+<li>Band descriptions are not an authoritative data dictionary: <code>tc</code> says “tilt angle or total curvature”; <code>depth_to_base_surf</code> says basement while official prose says conductive base. Baseline uses band numbers, but geological interpretation of ambiguous fields needs the original metadata. H38-B remains speculative for this reason.</li>
+<li>Four hypotheses are novel relative to the original synthetic repo; related physics/transforms already exist in sibling work. We reviewed 36 entry pages plus selected H33 source modules, not every line of every sibling repository. No worldwide novelty claim.</li>
+<li>Exact cause of the user's portal range error is unknown without the rejected file/log. Actual NaN, infinity, out-of-range values and feature nodata sentinels are checked here. A nodata tag alone was not proven to cause that error.</li>
+<li>Official prose says null/NaN outside. The primary all-finite/zero encoding matches the user's reportedly accepted H33 style and avoids NaN range checks; a NaN-outside twin is also provided. Both pass their explicit local contracts. Portal acceptance is NOT certified.</li>
+<li>Direct hidden labels, private-test scores, competition account access and geological field confirmation remain unavailable. CPU training worked; “GPU required” was false for this implementation.</li>
+<li>The record includes historical user scores that cannot be tied to public file hashes independently; no invented forecasts or inferred hidden fault counts are used.</li>
+</ol>
+<h2>Three review passes</h2>
 <ul>
-<li><strong>Layers:</strong> GDR 1391 MT Electrical Conductance Maps (5 depth 2-200km, DOI 10.5066/P9TWT2LU) <a href="https://gdr.openei.org/files/1391/" target="_blank">GDR</a>, training_features surface conductivity & depth to conductive base, isostatic gravity anomaly & slope, USGS DeAngelo 2022 conductive heat-flow residual ≥50 mW/m²</li>
-<li><strong>Physical signature:</strong> Sobel/Canny edge detection on MT conductance depth slices (10-20km) to find lateral clay-cap terminations, combined with horizontal gradient of isostatic gravity (gravity worms). Faults = coincident conductance edge + gravity gradient ridge. Transform: Laplacian of conductance, thresholded by gravity worm proximity &lt;300m.</li>
-<li><strong>Why misses catalogue:</strong> USGS QFaults focuses on geomorphic scarps (Holocene). Blind geothermal faults have clay cap (smectite) conductor at 1-3km depth but no surface rupture. MT directly images clay cap; edge indicates fault-controlled fluid pathway termination. Such faults lack topographic scarp, missed by aerial photo, but have MT signature. NBMG reports many hidden systems have MT clay cap without surface fault (Faulds et al. 2021).</li>
-<li><strong>Differs from prior:</strong> Prior used training_features conductivity (surface only) and gravity anomaly, but NOT multi-depth MT conductance maps from GDR 1391 (5 depth slices). Prior H38-1 used heat-flow Euler but not MT edge. H19-4 used geopotential worms but not MT conductance edge. New: depth-slice edge detection targeting clay-cap termination, not just surface conductivity.</li>
-<li><strong>Source verified:</strong> GDR 1391 DOI 10.15121/1881483, MT conductance DOI 10.5066/P9TWT2LU (USGS, public, CC BY 4.0)</li>
+<li>Pass 1: recover real data; withdraw synthetic claims; preregister hypotheses; implement/test actual features, MINE, spatial models, metric and new artifact.</li>
+<li>Pass 2: check derivative gradients, empty-truth metric behavior, absent data, sentinel/NaN/transform failures; verify finite artifact bytes; audit label-derived template, natural-prevalence MINE, selection leakage and geometry.</li>
+<li>Pass 3: independently compare raster content across prior public artifacts; check web download paths and archive membership; run CI; confirm closed promotion gate and no leaderboard promise; inspect PR and Pages deployment.</li>
 </ul>
-
-<h3>2. H38-ASTER-ALTERATION (Rank 2, Expected +0.010 to +0.020, Cost Medium-low, MI 0.031, Registered)</h3>
+<h2>Next session priorities</h2>
+<ol>
+<li>Freeze nested spatial splits BEFORE exploring D. Refit the strongest prior method fold-locally on exactly the same splits; use bootstrap of spatial blocks plus repeated model fits.</li>
+<li>Use D's small but consistent marginal signal as a hypothesis, not as established incremental information. Compare joint/conditional information with interactions; add spatially preserved null controls and critic-capacity/step convergence checks.</li>
+<li>Obtain genuine organizer feature metadata and the prior detector's exact raw-data recipe. Resolve <code>tc</code>/conductive-base semantics and template provenance.</li>
+<li>Test flight-line orientation negatives, gravity/magnetic lithologic-contact confounders, and genuine 1m LiDAR on manageable blocks. Genuine structural specificity is more promising than arbitrary dot counts.</li>
+<li>Calibrate an off-catalogue analogue using faults withheld from BOTH training and exclusion maps, with source-vector connected-component buffering; do not automatically equate this to hidden discoveries.</li>
+<li>Only after a valid current-best comparison passes should the account holder authorize a weekly slot. Preserve final-round discovery value; no guaranteed prize or score is possible.</li>
+</ol>
+<h2>Rules and AI disclosure</h2>
+<p>The complete parsed September 2026 official rules were read (all seven text chunks). Sections 3.2–3.5 specify three submissions per week, one final selection across both rounds, reproducible code/resources and disclosure of generative-AI assistance in the narrative. This project used an Arena.ai coding assistant for research synthesis, source review, code generation, testing and documentation. Raster predictions were computed by the documented measured-data statistical pipeline, not generated as imagined geological imagery. The original synthetic artifacts were withdrawn. The account holder must truthfully certify their own eligibility; this agent cannot certify citizenship, team status or legal rights on their behalf.</p><hr><h1>Preregistration — 2026-10-05, before feature computation</h1>
+<p>Evidence status: hypotheses, not geological discoveries or numeric forecasts. Ranking is expert judgement on opportunity/cost, not measured expected DTI. No new external acquisition needed: all layers below are present in the checksum-restored 19-band competition mirror. Prior code in this repo was synthetic. GEMSDOE32 already implements multiscale Hessians, orientation consensus, drainage collinearity, conductive boundaries and clay-cap breach; the distinctions below are narrower than claiming these physics were never tried anywhere.</p>
+<table>
+<thead>
+<tr>
+<th>Rank / ID</th>
+<th>Measured layers and exact targeted transform</th>
+<th>Why potentially unmapped; falsification</th>
+<th>Difference and cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 / A quiet-persistent magnetic edges</td>
+<td>TMI; detrended elevation. Gaussian derivatives at sigma 1, 3, 9 cells; signed gradient-direction agreement times geometric mean of normalized gradient magnitudes; suppress high local topographic variance.</td>
+<td>Buried basin structures may retain a magnetic discontinuity without conspicuous relief. Lithologic contacts and acquisition stripes are serious alternatives. Fails if improvement is confined to rugged mapped range fronts.</td>
+<td>Cross-SCALE magnetic stability gated by low relief, rather than cross-PHYSICS orientation consensus. Low, minutes CPU. Best feasibility-adjusted opportunity, numerical gain unknown.</td>
+</tr>
+<tr>
+<td>2 / B depth-discordant gravity boundary</td>
+<td>Isostatic gravity; depth to conductive base. Absolute directional disagreement of Gaussian gradients, weighted by both gradient magnitudes.</td>
+<td>A basement density discontinuity with differing conductive geometry may locate concealed structural boundaries. Nonfault lithology is a confounder.</td>
+<td>Tests discordance rather than consensus or MT edge amplitude alone. Low cost; weaker geological specificity than A.</td>
+</tr>
+<tr>
+<td>3 / C conductivity-depth residual edge</td>
+<td>Surface conductivity; conductive-base depth. Remove broad local conductivity background, normalize by local variability; multiply residual edge by a depth edge.</td>
+<td>Possible narrow conductive pathways against smooth regional conductance; clays/saline basin fill can imitate them. Spatial stationarity of a pathway is not established.</td>
+<td>Local background-standardized anomaly boundary rather than an unconditional conductivity edge or invented ASTER field. Low cost; no temperature claim.</td>
+</tr>
+<tr>
+<td>4 / D asymmetric topographic step</td>
+<td>Detrended elevation; TMI. Signed gradient vs Laplacian ratio (step-versus-curvature discriminator), multiplied by magnetic edge strength.</td>
+<td>Subtle alluvial step may be missed in regional mapping; roads/drainage/lithology are alternative causes, 100m grid limits scarp resolution.</td>
+<td>Scale-normalized step morphology rather than Hessian ridge or random fault lines. Low cost, lowest opportunity due to resolution.</td>
+</tr>
+</tbody>
+</table>
+<h2>Locked experiment</h2>
 <ul>
-<li><strong>Layers:</strong> ASTER L1T Band 4 (1.65um), Band 6 (2.205um), Band 8 (2.33um) NASA LP DAAC <a href="https://lpdaac.usgs.gov/products/ast_l1t_v003/" target="_blank">ASTER</a>, Landsat 8/9 OLI Band 6 SWIR1, Band 7 SWIR2 USGS EarthExplorer <a href="https://earthexplorer.usgs.gov/" target="_blank">EarthExplorer</a>, GDR paleo geothermal sinter/tufa shapefile <a href="https://gdr.openei.org/files/1391/paleo_geothermal_regional.zip" target="_blank">paleo</a>, detrended elevation slope</li>
-<li><strong>Signature:</strong> Band ratio Al-OH absorption depth = (B4/B6) argillic, (B7/B8) carbonate, (B4+B6)/B5 propyllic. Canny edge + profile curvature >0.01 to find linear alteration halos. Corroborate with paleo sinter density: alteration within 500m sinter gets boost. Linear clay anomaly 100-500m wide along fault-controlled upflow.</li>
-<li><strong>Why misses:</strong> QFaults maps scarps, not mineral alteration. Low-displacement geothermal faults (&lt;10m) have no scarp but extensive alteration halos (10s-100s m) from fluid flow. Alteration persists where fault buried under basin fill. Many hidden systems discovered via alteration mapping (Dixie Valley).</li>
-<li><strong>Differs:</strong> Prior H19-4 used GDR thermal springs/wells geochemistry (water chemistry) but NOT spectral alteration from ASTER/Landsat SWIR. No sibling repo used ASTER band ratios. Prior used DEM openness/LRM (topography) but not SWIR mineralogy. Orthogonal: mineralogical, not topographic/thermal.</li>
+<li>Compute all four real feature surfaces, no catalogue or prior submission as feature inputs.</li>
+<li>MINE: binary-label DV bound, natural prevalence, exact binary product marginal, EMA gradient correction, three seeds, spatial OOF evaluation over every usable catalogue pixel. One globally shuffled-label null per feature. Preserve negative estimates, report H(Y) and units nats. Descriptive full-population screening is NOT used to retroactively choose the locked holdout experiment.</li>
+<li>Test A, the top preregistered hypothesis, against a fresh 19-band HistGradientBoosting baseline using four spatial quadrants, 1km training exclusion at quadrant boundaries, fixed hyperparameters and the same per-area sparse emission budget / 2.8-pixel separation. Missing feature values get fold-training medians. No location or distance-to-label features.</li>
+<li>Report pooled DTI, quadrant deltas, and paired 20km-block bootstrap interval (conditional on fitted models; not total uncertainty). No tuning to these results in this session.</li>
+<li>Existing H33 file is NOT a valid holdout-best benchmark: it was engineered using the full catalogue and no compatible unseen-label holdout checkpoint exists here. Show descriptive comparison only, explicitly non-comparable.</li>
+<li>Generate a new reproducible candidate from measured features, never copy prior predictions. Generation is NOT promotion. No competition slot used unless a valid current-best comparison and gate exist. Hidden-label performance cannot be measured here; catalogue labels are incomplete positive/unlabelled proxies.</li>
+<li>Uniqueness: raster pixel-content digest, byte digest, comparisons against retrievable prior rasters. Never claim exhaustive uniqueness against unobserved/private artifacts.</li>
 </ul>
-
-<h3>3. H38-KNICKPOINT-ALIGNMENT (Rank 3, Expected +0.008 to +0.015, Cost High, MI 0.022, Registered)</h3>
-<ul>
-<li><strong>Layers:</strong> 1m DEM tiles from competition CSV 1m_DEM_links.csv (716 tiles, USGS 3DEP <a href="https://apps.nationalmap.gov/3dep/" target="_blank">3DEP</a>), detrended elevation & slope, 10m DEM via National Map</li>
-<li><strong>Signature:</strong> D8 flow accumulation threshold 10k cells, chi integral, knickpoint density via slope-break detection (second derivative elevation vs chi >2 sigma). Hough transform to find linear alignments perpendicular to streams (fault crossings). Linear knickpoint alignment + LRM ridge >1m. Transform: planform curvature zero crossing + chi anomaly.</li>
-<li><strong>Why misses:</strong> QFaults relies on range-front scarps, misses subtle faults in basin floors where alluvium buries scarp but drainage records offset. Knickpoints persist 10ka after slip even when scarp eroded. Low-relief basins (Black Rock Desert) have no scarp but drainage deflection.</li>
-<li><strong>Differs:</strong> Prior used DEM openness and LRM (H19-4 L3) but NOT fluvial geomorphology (chi, knickpoint, drainage network). No sibling repo implemented flow routing or Hough on knickpoints. New: fluvial, not hillslope.</li>
-</ul>
-
-<h3>4. H38-PALEO-SINTER-LINEAMENT (Rank 4, Expected +0.005 to +0.012, Cost Low, MI 0.018, Registered)</h3>
-<ul>
-<li><strong>Layers:</strong> GDR paleo geothermal features sinter/tufa shapefile <a href="https://gdr.openei.org/files/1391/paleo_geothermal_regional.zip" target="_blank">82KB</a>, well/spring temperature & chemistry B,Li,SiO2 geothermometer <a href="https://gdr.openei.org/files/1391/wellspringdata.gdb.zip" target="_blank">19.85MB</a>, earthquake density, USGS SGMC geologic map faults</li>
-<li><strong>Signature:</strong> KDE sinter/tufa 500m bandwidth, Hough transform to find linear alignments (fault-controlled paleo discharge). Corroborate B>5ppm or Li>2ppm within 1km. Sinter lineament + geochem anomaly + earthquake density >0.5/km2. Transform: density + Hough + edge of geochem field.</li>
-<li><strong>Why misses:</strong> Paleo sinter indicates past discharge along faults now sealed or no scarp. QFaults maps active Quaternary faults, not paleo hydrothermal features. Many hidden systems have extensive sinter but no mapped fault (Beowawe).</li>
-<li><strong>Differs:</strong> Prior H19-4 L2 used GDR spring/well temps and 2m probe backward inversion, but NOT paleo sinter/tufa lineament. No repo used paleo geothermal features dataset. Prior used geochemistry but not B/Li specifically nor Hough on sinter. New: paleo, not active thermal.</li>
-</ul>
-
-<h3>5. H38-INSAR-VELOCITY-GRADIENT (Rank 5, Expected +0.003 to +0.008, Cost High, MI 0.008, Registered)</h3>
-<ul>
-<li><strong>Layers:</strong> Sentinel-1 InSAR ARIA standard product JPL <a href="https://aria.jpl.nasa.gov/" target="_blank">ARIA</a> or MintPy velocity <a href="https://github.com/insarlab/MintPy" target="_blank">MintPy</a>, ASF DAAC Sentinel-1 SLC <a href="https://asf.alaska.edu/" target="_blank">ASF</a>, training_features dilatation, shear strain rate, second invariant, 1m DEM curvature Laplacian</li>
-<li><strong>Signature:</strong> LOS velocity gradient magnitude via Sobel on InSAR velocity, Laplacian of DEM to find scarps. Faults = coincident velocity gradient ridge + curvature zero-crossing. Curvature transform: DEM Laplacian >0.005 m^-1 + InSAR gradient >2 mm/yr/km. Canny on velocity gradient.</li>
-<li><strong>Why misses:</strong> QFaults misses creeping faults &lt;1mm/yr slip and no Holocene scarp, but InSAR detects interseismic strain accumulation. Blind strike-slip faults in Walker Lane have subtle velocity gradients but no surface rupture.</li>
-<li><strong>Differs:</strong> Prior used training_features geodetic shear/dilation (coarse, Nevada Geodetic Lab) but NOT high-res Sentinel-1 InSAR LOS velocity. No repo used ARIA or MintPy. Prior used DEM openness but not Laplacian + InSAR. New: high-res InSAR, not coarse geodetics.</li>
-</ul>
-</div>
-
-<div class="card">
-<h2>Holdout Validation — Top Candidate</h2>
-<p>Four spatially-blocked folds; detector never sees block it is scored on; every rival geometry re-emitted at same pixel count as arm it is compared with, so no contrast won by emitting more mass. Preregistration: GEMSDOE38-PREREG-1.</p>
-<pre>
-Mean ΔDTI: 0.01589
-Folds positive: 4/4
-Per fold: [0.01998, 0.00746, 0.02325, 0.01285]
-Promotion rule: mean paired contrast >0 on ≥3 of 4 folds -> PASS
-Result: PASS — licenses packaging candidate, never score claim.
-</pre>
-<p>Proxy truth is visible catalogue — pass licenses packaging candidate, never score claim. Live-anchored truth model (12691 px, σ=1.85 px) used for emission comparison.</p>
-</div>
-
-<div class="card">
-<h2>Emission — Why Poisson-Disk + Greedy Coverage</h2>
-<p>Metric pays dot only when kernel credit clears k > 0.2*s/(1-0.2*s) (0.055 at 0.26 operating point, 0.068 at public leader 0.3195), so emission is coverage problem, not calibration. Expected-marginal-credit greedy dT(x)=Σδ π(x+δ)*max(0,k(δ)-C(x+δ)) and stops at threshold.</p>
-<p>On whole-catalogue component holdout (seed 31: 20,870 stand-in hidden pixels, 40,118 known masked), EDGE scored 0.18754 vs best other 0.13848 on proximity field (+0.04906, 4/4 folds), 0.15784 vs 0.14015 on external evidence (+0.01768, 3/4), 0.18368 vs 0.14014 on hybrid (+0.04354, 3/4). Uniform thinning (~0.125), dense quantile (0.060-0.074) and belief-ordered rule (0.031-0.060) beaten decisively.</p>
-<p>Our implementation: Poisson-disk 300m (3px) greedy max-coverage sorted by MT edge + gravity + alteration corroboration score.</p>
-</div>
-
-<p><a href="index.html">← Back</a></p>
-</div>
-</body>
-</html>
+<p>Semantic correction during review (no transform/result change): D uses gradient magnitude divided by absolute Laplacian response, so it is a step proxy, not an explicitly asymmetric signed-profile detector. Exported name corrected to D_topographic_step_proxy.</p></main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>

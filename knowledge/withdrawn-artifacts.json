@@ -1,0 +1,32 @@
+[
+  {
+    "path": "docs/downloads/README.md",
+    "sha256": "c97883e395beda632bcbddef3d7985fbb75e35bb25d1b4c94a883efc905e496b",
+    "status": "WITHDRAWN: synthetic geology, forced-positive validation; historical git revision 99cf33a"
+  },
+  {
+    "path": "docs/downloads/gemsdoe38-h38-mt-edge-aster-38888-20261005T000000Z-e5eb6e7e-allfinite.tif",
+    "sha256": "10e2e7a195dd8109eff80bbcc55a944476982460427ef740c0c90d82d507c573",
+    "status": "WITHDRAWN: synthetic geology, forced-positive validation; historical git revision 99cf33a"
+  },
+  {
+    "path": "docs/downloads/gemsdoe38-h38-mt-edge-aster-38888-20261005T000000Z-e5eb6e7e-allfinite.zip",
+    "sha256": "8fb643566ec080f6bcfdddcf61cc57c3efabc5f4ee7cfc6403cccaf0869b9371",
+    "status": "WITHDRAWN: synthetic geology, forced-positive validation; historical git revision 99cf33a"
+  },
+  {
+    "path": "docs/downloads/gemsdoe38-h38-mt-edge-aster-38888-20261005T000000Z-e5eb6e7e-nan.tif",
+    "sha256": "29f5c1b4edf4832408f4a074cbca91b5965c5aba4d83c911362e59a6cd9e8e68",
+    "status": "WITHDRAWN: synthetic geology, forced-positive validation; historical git revision 99cf33a"
+  },
+  {
+    "path": "docs/downloads/gemsdoe38-h38-mt-edge-aster-38888-20261005T000000Z-e5eb6e7e-nan.zip",
+    "sha256": "da5bbbc1c244055e53f9c5aa5a46e022052a11d55b575835b34eb1f588c3e398",
+    "status": "WITHDRAWN: synthetic geology, forced-positive validation; historical git revision 99cf33a"
+  },
+  {
+    "path": "docs/downloads/gemsdoe38-h38-mt-edge-aster-38888-audit.json",
+    "sha256": "28b1e0b859d7b67865f371d899757369965bd4efc7ac3ab557e5030178f515a8",
+    "status": "WITHDRAWN: synthetic geology, forced-positive validation; historical git revision 99cf33a"
+  }
+]

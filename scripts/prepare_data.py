@@ -1,61 +1,56 @@
-"""
-Prepare data after download
-- Validates training_features.tif, labels.tif, sample_submission.tif
-- Computes footprint mask from sample_submission.tif (np.isfinite)
-- Sanitizes sentinel -3.4028234663852886e+38
-- Creates train/val splits spatially blocked (4 quadrants)
-"""
+"""Fail-closed input inventory; never generate surrogate footprints or labels."""
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import hashlib, json
 import numpy as np
 import rasterio
-from pathlib import Path
-import sys
 
-def prepare():
-    data_dir = Path("data")
-    if not data_dir.exists():
-        print("data/ not found, creating")
-        data_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Check for required files
-    required = ["training_features.tif", "sample_submission.tif"]
-    for fname in required:
-        fpath = data_dir / fname
-        if not fpath.exists():
-            print(f"Missing {fpath} — see scripts/download_competition_data.sh")
-        else:
-            print(f"Found {fpath}")
-            with rasterio.open(fpath) as src:
-                print(f"  Shape: {src.width}x{src.height}, bands: {src.count}, crs: {src.crs}")
-                data = src.read(1)
-                print(f"  Min: {np.nanmin(data)}, Max: {np.nanmax(data)}, NaN: {np.sum(np.isnan(data))}")
-                # Check for sentinel
-                sentinel = -3.4028234663852886e+38
-                # Count close to sentinel
-                count_sentinel = np.sum(np.isclose(data, sentinel, rtol=1e-5))
-                if count_sentinel>0:
-                    print(f"  WARNING: Found {count_sentinel} sentinel values {sentinel} — need sanitization")
-    
-    # Footprint from sample_submission.tif
-    sample_path = data_dir / "sample_submission.tif"
-    if sample_path.exists():
-        with rasterio.open(sample_path) as src:
-            data = src.read(1)
-            footprint = np.isfinite(data)
-            print(f"Footprint from sample_submission.tif: {np.sum(footprint)} valid pixels out of {data.size} (expected 5,167,373)")
-            # Save footprint mask
-            np.save(data_dir / "footprint_mask.npy", footprint)
-            print(f"Saved footprint mask to {data_dir / 'footprint_mask.npy'}")
-    else:
-        print("sample_submission.tif not found, cannot compute footprint")
-        print("Using synthetic footprint: 5,167,373 random pixels")
-        # Synthetic for demo
-        total = 3730*3292
-        footprint_size = 5167373
-        flat = np.zeros(total, dtype=bool)
-        flat[np.random.choice(total, footprint_size, replace=False)] = True
-        footprint = flat.reshape((3730,3292))
-        np.save(data_dir / "footprint_mask.npy", footprint)
+
+def prepare(data_dir=Path("data")):
+    rows = {}
+    with rasterio.open(data_dir / "sample_submission.tif") as t:
+        shape, crs, transform = t.shape, t.crs, t.transform
+        a = t.read(1, masked=True)
+        foot = ~np.ma.getmaskarray(a) & np.isfinite(a.data)
+    if not foot.any():
+        raise ValueError("Empty template footprint")
+    for name in ["sample_submission", "labels", "training_features"]:
+        path = data_dir / (name + ".tif")
+        with rasterio.open(path) as s:
+            if (s.shape, s.crs, s.transform) != (shape, crs, transform):
+                raise ValueError("Misaligned " + name)
+            if s.count != (19 if name == "training_features" else 1):
+                raise ValueError("Band count")
+            if name == "labels":
+                y = s.read(1, masked=True)
+                if (
+                    np.ma.getmaskarray(y)[foot].any()
+                    or not np.isin(y.data[foot], [0, 1]).all()
+                ):
+                    raise ValueError("Invalid labels")
+            rows[name] = {
+                "shape": list(s.shape),
+                "crs": str(s.crs),
+                "transform": list(s.transform)[:6],
+                "bands": s.count,
+                "descriptions": s.descriptions,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+    np.save(data_dir / "footprint_mask.npy", foot)
+    rows["footprint_pixels"] = int(foot.sum())
+    rows["label_status"] = (
+        "known catalogue positives; zero is unlabelled, NOT verified true absence; hidden new faults unavailable"
+    )
+    rows["template_warning"] = (
+        "Template nonzero values match known labels; never use template pixel values as prediction features."
+    )
+    Path("knowledge/input-inventory.json").write_text(json.dumps(rows, indent=2))
+    print(json.dumps(rows, indent=2))
+    return foot
+
 
 if __name__ == "__main__":
     prepare()

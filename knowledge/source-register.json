@@ -1,0 +1,97 @@
+{
+  "checked_utc": "2026-10-05",
+  "method": "Official pages read via research fetch tool; entry-page mirrors via gh API. Date is a snapshot, not continuous certification.",
+  "sources": [
+    {
+      "id": "competition",
+      "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/",
+      "authority": "DrivenData organizer",
+      "verified": "Fault-discovery target; provided layers; incomplete labels; 300m triangular kernel, alpha .2 beta .8; single float32 band EPSG32611, matching grid, [0,1], null/NaN outside",
+      "status": "read"
+    },
+    {
+      "id": "mask",
+      "url": "https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516/4",
+      "authority": "DrivenData staff chrisk-dd",
+      "verified": "Known-fault exclusion is pixel-exact; nearby unknown labels can occur; nearby predictions may incur full FP penalty",
+      "status": "read"
+    },
+    {
+      "id": "leaderboard",
+      "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/leaderboard/",
+      "authority": "DrivenData organizer",
+      "verified": "Top 0.3262, second 0.3222, third 0.3195; extradr19 0.2778. No submitted artifact hashes exposed.",
+      "status": "read"
+    },
+    {
+      "id": "rules",
+      "url": "https://docs.nlr.gov/docs/fy26osti/96647.pdf",
+      "authority": "NLR official rules, September 2026",
+      "verified": "Three submissions/week; one final submission across both rounds; reproduce code/resources; disclose generative AI in narrative; eligibility certifications and external-content rights apply. Account-specific eligibility not verified.",
+      "status": "read all seven text chunks (complete parsed PDF)"
+    },
+    {
+      "id": "reference",
+      "url": "https://github.com/drivendataorg/gems-prize-reference-solution",
+      "authority": "DrivenData",
+      "verified": "Official reference notebook and environment files exist; repository tree checked",
+      "status": "tree checked"
+    },
+    {
+      "id": "mine",
+      "url": "https://proceedings.mlr.press/v80/belghazi18a.html",
+      "authority": "ICML/PMLR 2018",
+      "verified": "MINE publication, neural variational mutual-information estimation",
+      "status": "read"
+    },
+    {
+      "id": "mi-caution",
+      "url": "https://proceedings.mlr.press/v97/poole19a.html",
+      "authority": "ICML/PMLR 2019",
+      "verified": "Variational MI bounds have bias/variance tradeoffs",
+      "status": "read"
+    },
+    {
+      "id": "geodawn",
+      "url": "https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and",
+      "authority": "USGS",
+      "verified": "GeoDAWN survey design, 400m flight lines in Area 2, variable terrain clearance, data availability, CC0",
+      "status": "read"
+    },
+    {
+      "id": "gdr",
+      "url": "https://gdr.openei.org/submissions/1391",
+      "authority": "DOE Geothermal Data Repository",
+      "verified": "Public INGENIOUS resources and CC BY 4.0; metadata access is not binary download receipt",
+      "status": "read"
+    },
+    {
+      "id": "battle-mountain",
+      "url": "https://pubs.usgs.gov/publication/70271418",
+      "authority": "USGS publication record",
+      "verified": "Integrated gravity, magnetic and MT modeling of potential blind geothermal system; no validation of this project's predictions",
+      "status": "search excerpt reviewed"
+    },
+    {
+      "id": "structural",
+      "url": "https://www.osti.gov/servlets/purl/1110517",
+      "authority": "DOE OSTI-hosted scientific literature",
+      "verified": "Structural relationships and geothermal fluid pathways; source does not certify our model",
+      "status": "search excerpt reviewed"
+    },
+    {
+      "id": "data-access",
+      "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/data/",
+      "authority": "DrivenData",
+      "verified": "Fetch redirected to accounts/login. Owner-supplied checksum mirror restored instead.",
+      "status": "login redirect verified"
+    },
+    {
+      "id": "about",
+      "url": "https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/",
+      "authority": "DrivenData",
+      "verified": "Geophysical inference of hidden faults; surface fault traces are the mapping target; additional fault-mapping literature linked.",
+      "status": "read"
+    }
+  ]
+}
