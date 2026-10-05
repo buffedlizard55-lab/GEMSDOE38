@@ -55,8 +55,8 @@
       "id": "geodawn",
       "url": "https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and",
       "authority": "USGS",
-      "verified": "GeoDAWN survey design, 400m flight lines in Area 2, variable terrain clearance, data availability, CC0",
-      "status": "read"
+      "verified": "USGS GeoDAWN survey design, Area 2: 400 m traverse lines at azimuth 90 degrees and 4 km tie lines at 180 degrees; variable terrain clearance; magnetic data tie-line leveled and micro-leveled; public release rights CC0.",
+      "status": "USGS data-release page read; raw GeoDAWN bytes not obtained in this sandbox"
     },
     {
       "id": "gdr",
@@ -92,6 +92,27 @@
       "authority": "DrivenData",
       "verified": "Geophysical inference of hidden faults; surface fault traces are the mapping target; additional fault-mapping literature linked.",
       "status": "read"
+    },
+    {
+      "id": "geodawn-sciencebase-raw",
+      "url": "https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7",
+      "authority": "USGS ScienceBase catalog; GeoDAWN DOI 10.5066/P93LGLVQ",
+      "verified": "Attached-file table lists raw Area-2 magnetic flight-line CSV ZIP (3.74 GB), Area-2 radiometric flight-line CSV ZIP (427.33 MB), gridded magnetic/radiometric products and flight paths. USGS describes Area 2 traverse spacing 400 m at azimuth 90 degrees, tie lines 4 km at 180 degrees, and tie-line/micro-leveling of magnetic data.",
+      "status": "metadata read 2026-10-05; raw bytes not downloaded; prior shell HTTPS attempt failed TLS; not used in a candidate"
+    },
+    {
+      "id": "blind-geothermal-study",
+      "url": "https://pubs.usgs.gov/publication/70221765",
+      "authority": "USGS publication warehouse; report DOI 10.2172/1724080",
+      "verified": "Abstract describes a blind Gabbs Valley geothermal system with a displacement-transfer zone, fault intersections, gravity-gradient terminations, magnetic and shallow-temperature/resistivity evidence, later supported by temperature-gradient drilling. It motivates—but does not validate—the preregistered junction hypothesis.",
+      "status": "official abstract read; no new project score or label evidence"
+    },
+    {
+      "id": "prior-holdout-audit",
+      "url": "https://github.com/buffedlizard55-lab/GEMSDOE32/tree/b63ebab7dbcf9238422ebbc2dbc4addf84bed11b",
+      "authority": "Sibling owner repository; not an organizer source",
+      "verified": "At pinned commit, holdout code sets COLLAR_PX=15 and DOMAIN_ERODE=12, while evidence/h33_holdout.json describes 30-pixel collar and 20-pixel erosion. Required derived_sgmc_faults_100m_u8.tif is not tracked in that tree. Its live-mirror receipt reproduces 2/6 logged orderings, 3/6 after its own calibration. Treat scores as non-reproducible proxy evidence, not hidden-label certification.",
+      "status": "pinned source and named files reviewed 2026-10-05; no promotion-grade checkpoint"
     }
   ]
 }

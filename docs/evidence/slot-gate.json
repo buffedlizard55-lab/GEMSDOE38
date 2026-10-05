@@ -1,0 +1,33 @@
+{
+  "checked_utc": "2026-10-05",
+  "status": "CLOSED",
+  "approved_for_competition_submission": false,
+  "no_auto_upload": true,
+  "candidate": "gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48",
+  "candidate_status": "unique research artifact; local format checks pass; portal acceptance and hidden-fault skill are untested",
+  "reasons_closed": [
+    "No compatible, independently reproducible current-best spatial holdout checkpoint is available for GEMSDOE38.",
+    "The user-reported H33-2-B2 0.2778 mapping is not tied to an organizer-exposed file hash; GEMSDOE32's own holdout evidence has missing tracked inputs and conflicting logged/code fold settings.",
+    "GEMSDOE32's live-mirror receipt reproduced only 2 of 6 logged historical orderings (3 of 6 after its own prevalence calibration), so its proxy is not a promotion-grade benchmark.",
+    "The D raster's historical 19+D feature comparison used the incomplete public catalogue as a proxy and did not test the final 0.7%/3.0px/tip-protected emission and catalogue exclusion as an artifact-level model-vs-current-best comparison.",
+    "The preregistered J feature did not show a reliable incremental gain over the frozen D model: +0.000712 DTI, 2/4 folds positive, paired 20 km block bootstrap 95% interval [-0.004698, +0.006037] on the public catalogue proxy.",
+    "Final review found that the as-coded L variant differs from its registered signed side-contrast formula; its MINE values are exploratory only and no solo L spatial comparison was run.",
+    "Neither zero-outside nor NaN-outside encoding has been accepted by the competition portal; local disk-reread validation is not portal certification."
+  ],
+  "evidence": {
+    "d_zero_file_sha256": "8e0876bbe844ee118489993bc3fe67c3120181ffef9a0dc144c083fbb5a1f5cd",
+    "d_nan_file_sha256": "1c1fd7096880829d1693a262573522b2bb41a8eccdf22b03b3d8fdda1de99081",
+    "d_canonical_pixel_sha256": "ecfbf59e2b487400bd6a180ab745f1914619cff88afda3a2bbcdc54f4336e0d2",
+    "j_internal_proxy_test": "knowledge/validation-v3.json",
+    "l_implementation_review": "knowledge/hypotheses-v3-review-amendment.md",
+    "h33_public_evidence_review": "GEMSDOE32 commit b63ebab7dbcf9238422ebbc2dbc4addf84bed11b; findings summarized in knowledge/research-review.md"
+  },
+  "requirements_to_reopen": [
+    "Restore or regenerate exact versioned holdout data and confirm its hashes and split parameters against the current checked-in code.",
+    "Reproduce the prior H33/current-best raster and baseline on the same frozen spatial test cells, with all features, model fitting, emission policy, exclusion policy and paired uncertainty reported.",
+    "Use a genuinely held-out fault truth set or a clearly qualified independent analogue whose source data and provenance are available; do not treat unlabelled zero cells as verified negatives.",
+    "Pass the preregistered incremental candidate-vs-current-best gate without changing budget, spacing, collar or thresholds after seeing the result.",
+    "Keep submission encoding and organizer portal acceptance distinct from local TIFF validation; obtain an actual portal acceptance result before claiming certification."
+  ],
+  "decision": "Retain the unique TIFF as a clearly marked research/download artifact. Do not recommend or perform a weekly submission or final-round selection from the present evidence."
+}

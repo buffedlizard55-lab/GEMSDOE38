@@ -1,0 +1,144 @@
+{
+  "version": 3,
+  "units": "nats",
+  "label_status": "public known catalogue vs unlabelled; not hidden new-fault truth",
+  "population": 5167373,
+  "positives": 60988,
+  "label_entropy_nats": 0.06412918024082224,
+  "method": "DV-MINE; natural prevalence; exact binary product marginal; EMA .99; 24 tanh units; 800 stochastic steps; batch 512; all-pixel evaluation",
+  "seeds": [
+    38,
+    138,
+    238
+  ],
+  "evaluation_population_per_fit": "all rows in the named full or spatial test population",
+  "upstream_feature_statistics_scope": "footprint-wide, label-free normalization/transforms; transductive, not fold-local",
+  "limitations": [
+    "Full-fit estimates are evaluated on training labels and can be optimistic.",
+    "Finite-capacity, bounded DV critics can miss dependence and their estimates are not guaranteed unbiased or low-variance.",
+    "Spatial OOF estimates are diagnostics; they are not an independent hidden-label estimate or a confidence interval.",
+    "Global shuffled-label controls destroy spatial autocorrelation and are optimization controls, not spatial significance tests.",
+    "Marginal I(feature; label) is not conditional/incremental information given the existing 19 bands or D.",
+    "Upstream feature normalization uses the full footprint without labels; the spatial folds therefore have a label-free transductive preprocessing step, not strictly fold-local preprocessing.",
+    "The public catalogue is incomplete positive-unlabelled data; label zero is not verified absence.",
+    "The as-coded unsigned L variant differs from the preregistered signed opposing-side L transform; its MINE result is exploratory only (see knowledge/hypotheses-v3-review-amendment.md)."
+  ],
+  "features": {
+    "J_asymmetric_magnetic_flank": {
+      "full_fit_nats": [
+        5.078786387163227e-05,
+        5.360153652694821e-05,
+        3.5430981006015494e-05
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          2.662797324412547e-05,
+          -7.34131654193948e-06,
+          9.984269714383327e-05,
+          -2.604702138896218e-05
+        ],
+        [
+          2.0231616922005563e-05,
+          -4.597279515673042e-06,
+          0.0001070959651711563,
+          -2.570785838426279e-05
+        ],
+        [
+          3.9698641470159446e-05,
+          -8.557584516288852e-07,
+          5.999384755754622e-05,
+          -2.5763479476158258e-06
+        ]
+      ],
+      "shuffled_null_nats": [
+        -2.1802118486263788e-07,
+        -4.227874608013493e-07,
+        -2.0956540126154666e-07
+      ],
+      "full_fit_mean_nats": 4.6606793801531994e-05,
+      "full_fit_seed_sd_nats": 9.780249597180068e-06,
+      "oof_weighted_mean_nats": 1.9499668611401407e-05,
+      "oof_seed_sd_nats": 4.601424339177544e-06,
+      "null_mean_nats": -2.8345801564184464e-07,
+      "screen": "predeclared primary; positive marginal OOF screen; proceed to locked J comparison"
+    },
+    "K_multiscale_crossfield_junction": {
+      "full_fit_nats": [
+        4.0021586674345716e-05,
+        4.065237352868234e-05,
+        1.9053529405468894e-05
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          4.29376564224232e-05,
+          -2.01671383063505e-05,
+          -5.4159264762904114e-05,
+          -1.2398694328383253e-05
+        ],
+        [
+          4.507190796968451e-05,
+          -1.8080373610486478e-05,
+          -5.6826345857997895e-05,
+          -1.8096723411882912e-05
+        ],
+        [
+          2.02764289561827e-05,
+          -5.746454860330874e-06,
+          -1.1941158375019384e-05,
+          -3.6750364960300153e-06
+        ]
+      ],
+      "shuffled_null_nats": [
+        -1.4680217982343535e-06,
+        -2.1477220538482222e-07,
+        8.742843754516727e-09
+      ],
+      "full_fit_mean_nats": 3.324249653616565e-05,
+      "full_fit_seed_sd_nats": 1.2292052887573161e-05,
+      "oof_weighted_mean_nats": 7.019358806241301e-06,
+      "oof_seed_sd_nats": 7.157760556789344e-07,
+      "null_mean_nats": -5.580170532882197e-07,
+      "screen": "positive marginal OOF screen only; no solo spatial model comparison run"
+    },
+    "L_unsigned_basin_depth_gravity_conductivity_gradient": {
+      "full_fit_nats": [
+        1.3683279893345057e-05,
+        1.9360423235696006e-05,
+        1.8513953794981747e-05
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          1.543961155328448e-05,
+          6.105061719233196e-06,
+          7.2711120817771195e-06,
+          2.1508084909981767e-05
+        ],
+        [
+          2.1404846944055728e-05,
+          9.003846160975104e-06,
+          2.3364034710017523e-06,
+          3.9108916128301197e-05
+        ],
+        [
+          2.2047485113300958e-05,
+          8.386516930462828e-06,
+          7.361874968258436e-06,
+          3.616061552470448e-05
+        ]
+      ],
+      "shuffled_null_nats": [
+        -1.1432407416404888e-07,
+        8.574488842907901e-08,
+        -2.4323560166017444e-07
+      ],
+      "full_fit_mean_nats": 1.7185885641340937e-05,
+      "full_fit_seed_sd_nats": 3.0627296481955616e-06,
+      "oof_weighted_mean_nats": 1.6910283106778156e-05,
+      "oof_seed_sd_nats": 3.3845472317249152e-06,
+      "null_mean_nats": -9.060492913171477e-08,
+      "screen": "EXPLORATORY ONLY: positive marginal OOF estimate belongs to the unsigned as-coded variant, not registered L; no solo spatial model comparison run",
+      "registered_hypothesis": "L_signed_basin_side_step",
+      "implementation_status": "exploratory unsigned variant; preregistered signed opposing-side contrast was not implemented"
+    }
+  }
+}

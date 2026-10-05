@@ -1,7 +1,9 @@
-"""Generate NEW unique TIF using top MINE-validated hypothesis D (and optionally I).
-Uses full-data fit, improved emission: 0.7% density, 3.0px separation, 200m catalogue exclusion,
-with tip-protection heuristic to retain possible corrections near fault endpoints.
-No prior prediction used as input.
+"""Rebuild the historical D research artifact from measured data.
+
+This script never approves a competition submission. Its 0.7%/3.0px/tip-protected
+post-processing was not validated against the current-best holdout, and the local
+catalogue-proxy feature result is not hidden-fault evidence. No prior prediction
+is used as input.
 """
 
 import sys
@@ -16,12 +18,12 @@ from src.hypotheses import NAMES
 from scripts.validate_submission import validate
 
 if __name__ == "__main__":
-    # Load validation to ensure gate
+    # A positive historical proxy result cannot open the competition slot gate.
     v2 = json.loads(Path("knowledge/validation-v2.json").read_text())
+    slot_gate = json.loads(Path("knowledge/slot-gate.json").read_text())
     best = v2["pooled"]["plus_D"]
-    print(f"Best pooled D: {best['dti']} delta {best['delta_vs_baseline']} CI {best['paired_bootstrap_95']} folds {best['positive_folds']}/4")
-    if best["positive_folds"] < 3 or best["paired_bootstrap_95"][0] <= 0:
-        print("WARNING: D does not fully pass strict gate, but is best among tested")
+    print(f"Historical D catalogue-proxy result: {best['dti']:.8f}; delta {best['delta_vs_baseline']:+.8f}; 95% CI {best['paired_bootstrap_95']}; {best['positive_folds']}/4 folds")
+    print(f"Competition slot gate: {slot_gate['status']} — this generator emits research artifacts only")
     # Data
     foot = np.load("data/footprint_mask.npy")
     X = np.load("data/derived/X.npy", mmap_mode="r")
@@ -130,16 +132,17 @@ if __name__ == "__main__":
     different2 = int(np.count_nonzero(np.nan_to_num(old) != pred2))
     print(f"DI candidate different vs H33: {different2}, vs D: {int(np.count_nonzero(pred != pred2))}")
 
-    # Manifest for primary (D-only) as the promoted candidate
-    note = f"G38 D-topo-step 19+D HGB120 0.7pct s3.0 tipProt 200mExcl; OOF+0.00807 4/4 CI>0; MINE D 0.000148 nats"
+    # Manifest for the primary D-only research artifact; it is never promoted here
+    note = "G38 D-step 19+D HGB120; 0.7%, 3.0px, tip-protected; local format-check only"
     assert len(note) <= 200
     manifest = {
         "name": name,
         "submission_note": note,
-        "status": "CANDIDATE_VALIDATED_OOF_4FOLDS_CI_POSITIVE",
-        "approved_for_competition_submission": True,
+        "status": "LOCAL_FORMAT_CHECKED_RESEARCH_ARTIFACT_SLOT_GATE_CLOSED",
+        "approved_for_competition_submission": False,
         "leaderboard_score": None,
-        "algorithm": "Full-data HGB 19 bands + D_topographic_step_proxy (MINE-validated top feature). 0.7% density, 3.0px Poisson-disk thinning, 200m catalogue exclusion with tip protection (retain within 3px of endpoints). No prior prediction as input.",
+        "algorithm": "Full-data HGB 19 bands + D_topographic_step_proxy; 0.7% density, 3.0px Poisson-disk thinning, 200m catalogue exclusion with tip protection (retain within 3px of endpoints). No prior prediction as input. The final emission/post-processing is not validated against a reproducible current-best holdout.",
+        "slot_gate": slot_gate,
         "training": train_receipt,
         "prediction_encoding": "binary ranking decision, NOT calibrated probability",
         "geometry": {
@@ -155,7 +158,7 @@ if __name__ == "__main__":
         },
         "canonical_pixels_sha256": digest,
         "files": receipts,
-        "validation": v2["pooled"]["plus_D"],
+        "historical_v2_catalogue_proxy_result_not_artifact_validation": v2["pooled"]["plus_D"],
         "mine": {
             "D_full_fit_mean_nats": 0.00014835130457352898,
             "D_oof_mean_nats": 0.00012556536334136528,
@@ -168,9 +171,9 @@ if __name__ == "__main__":
             "different_vs_primary": int(np.count_nonzero(pred != pred2)),
             "different_vs_h33": different2,
             "files": receipts2,
-            "validation": v2["pooled"]["plus_D_I"],
+            "historical_v2_catalogue_proxy_result_not_artifact_validation": v2["pooled"]["plus_D_I"],
         },
-        "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation_v2.py; python scripts/generate_submission_v2.py",
+        "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation_v2.py; python scripts/generate_submission_v2.py. This script always emits research artifacts only; a future approved candidate needs a separate reviewed build and gate.",
     }
     Path("knowledge/submission-manifest.json").write_text(json.dumps(manifest, indent=2, allow_nan=False))
     (out / "submission-audit.json").write_text(json.dumps(manifest, indent=2, allow_nan=False))

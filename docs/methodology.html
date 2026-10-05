@@ -1,10 +1,87 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, verified GeoTIFF downloads and transparent validation."><title>Scientific review and results · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap article"><span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results and interpretations are separated. Negative results remain visible.</p><h2>Full-catalogue MINE estimates — 9 features</h2><p>Natural-log units (nats), three seeds. OOF means weighted by spatial-fold population. Null labels globally permuted. These values describe catalogue labels, not hidden new-fault truth. D_topographic_step_proxy has highest stable OOF; F_transtensional_corridor highest full-fit but negative OOF (spatial overfit).</p><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Full-fit mean</th><th>Spatial OOF mean</th><th>Shuffled null</th><th>Screen</th></tr></thead><tbody><tr><td>A_quiet_persistent_magnetics</td><td>0.0000170</td><td>0.0000043</td><td>-0.0000004</td><td>retain for interaction study only</td></tr><tr><td>B_depth_gravity_discordance</td><td>0.0000012</td><td>-0.0000216</td><td>-0.0000005</td><td>no stable positive OOF marginal evidence; do not claim information-free</td></tr><tr><td>C_conductivity_residual_edge</td><td>0.0000166</td><td>0.0000091</td><td>-0.0000002</td><td>retain for interaction study only</td></tr><tr><td>D_topographic_step_proxy</td><td>0.0001484</td><td>0.0001256</td><td>-0.0000003</td><td>retain for interaction study only</td></tr><tr><td>E_basin_concealed_coedge</td><td>0.0000686</td><td>0.0000281</td><td>-0.0000007</td><td>retain for interaction study only</td></tr><tr><td>F_transtensional_corridor</td><td>0.0002839</td><td>-0.0000731</td><td>-0.0000006</td><td>no stable positive OOF marginal evidence; do not claim information-free</td></tr><tr><td>G_quake_fabric_lineament</td><td>0.0000703</td><td>0.0000117</td><td>-0.0000004</td><td>retain for interaction study only</td></tr><tr><td>H_rtp_tilt_basement_step</td><td>0.0000454</td><td>0.0000355</td><td>-0.0000004</td><td>retain for interaction study only</td></tr><tr><td>I_drainage_deflection_curvature</td><td>0.0001284</td><td>0.0001110</td><td>-0.0000004</td><td>retain for interaction study only</td></tr></tbody></table></div><p><a href="evidence/mine-results.json">All seeds, folds, units and limitations</a> · <a href="evidence/validation-v2.json">Validation v2 (9 configs)</a></p><h2>Why H33-2-B2 reached 0.2778 and how to beat it</h2><p><strong>DTI is a budget:</strong> D = T / (0.2(T+FP) + 0.8|G|). Each emitted pixel must earn &gt;0.2·DTI coverage to improve score. Thinning a thick surface (H19-5 121k → 44k → 37k) removes redundant mass while retaining geometric credit. H33 also prunes within 200m of known catalogue (pixel-exact mask is official; near-catalogue predictions are penalized unless near new truth). That saves FP mass but can delete true corrections (staff says new truth can be within 300m of known faults).</p><p><strong>New candidate improvements:</strong></p><ul><li>Validated feature D_topographic_step_proxy: step morphology (grad/|Laplacian|) × magnetic edge. MINE full-fit 0.000148 nats, OOF 0.000125 nats (vs null -3e-07). Spatial holdout: +0.00807 DTI, 4/4 folds, 95% CI [0.00109, 0.01549] excludes zero — first feature to pass strict gate.</li><li>Improved emission: 0.7% density (36,171 px vs 41,339 previously, 37,654 H33) and 3.0px separation (vs 2.8) reduces kernel overlap (ρ from 1.429→1.179 in H28 analysis) and raises credit per pixel.</li><li>Tip protection: retain predictions within 3px of fault endpoints (splays, tip extensions) even if within 200m of catalogue, to preserve potential corrections that H33's blind 200m prune would delete.</li><li>Unique content: 71,947 pixels different vs H33 reference, 0 duplicates vs 208 same-grid prior rasters.</li></ul><p><strong>Can we exceed 0.2778 / 0.3262?</strong> Possible in principle; not demonstrated. Leaderboard 0.3262 needs ~25% more mean credit per pixel than 0.26 at same mass. Our catalogue-proxy gain (+6%) is not a hidden-fault guarantee. Next: test D+I interaction on fresh nested splits, flight-line controls, 1m LiDAR blocks.</p><h1>Scientific review and decision record — 2026-10-05 (updated 2026-10-05 v2)</h1>
-<h2>v2 Update: validated D and new unique submission 2026-10-05</h2>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, unique GeoTIFF research artifact, and transparent validation."><title>Scientific review and results · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap article"><span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results, proxy evaluations and interpretations are separated. Failed gates and uncertainty remain visible.</p><h2>Current decision</h2><p><strong>SLOT GATE CLOSED. Do not submit the current artifact. No current-best compatible reproducible holdout is available, and no claim to beat H33 or the leaderboard is made.</strong> The v3 J incremental comparison fails against D on the public catalogue proxy. See the <a href="evidence/slot-gate.json">gate record</a>.</p><h2>v3 preregistration</h2><h1>Preregistration v3 — 2026-10-05, before new feature computation</h1>
+<p><strong>Status:</strong> falsifiable research hypotheses, not discovered faults or vents. The ranking is a qualitative prior on expected DTI opportunity and implementation cost, not a numeric forecast. The top candidate was selected on physical rationale before computing its MINE value. MINE will be reported as marginal dependence on the public catalogue mask; the hidden expert labels are unavailable, and zero in the public raster means <em>unlabelled</em>, not confirmed absence.</p>
+<h2>Evidence and novelty scope</h2>
+<p>The official problem describes incomplete public fault labels and expert-identified faults outside the public USGS catalogue. Its target is fault traces, not geothermal vents directly. The task's 100 m products are a spatially coarse proxy for structures; they cannot establish a fault, fluid flow, temperature, or geothermal productivity at a pixel. The official USGS GeoDAWN release says its airborne magnetics/radiometrics support mapping of subsurface structure/geology and surface geology/soil composition; this supports testing geophysical contrasts, but does not establish that a particular contrast is diagnostic of a fault.</p>
+<p>We searched the 36 pinned sibling-site snapshots plus this repository's code and feature registers. The proposals below are new feature definitions in GEMSDOE38, not claims of worldwide novelty. Related work exists in sibling repositories: multi-physics edge coincidence / intersection density, topographic one-sided scarp asymmetry, gravity/basement steps, magnetic texture, DEM drainage and radiometric features. Those overlaps are called out rather than hidden. In particular, the previous version-2 D result is not treated as a clean current-best holdout: its candidate was promoted after screening the same catalogue labels on the same four quadrants, and the final TIF changed emission density, spacing and catalogue post-processing. No weekly slot has been used.</p>
+<h2>Ranked candidates</h2>
+<table>
+<thead>
+<tr>
+<th>Rank / ID</th>
+<th>Layers (provided band names)</th>
+<th>Physical signature and locked transform</th>
+<th>Why it could flag a missing fault rather than merely reproduce a mapped trace</th>
+<th>Difference from this repo / prior-work caveat</th>
+<th>Expected DTI opportunity / implementation cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 / J — asymmetric magnetic damage-zone flank</strong> (primary)</td>
+<td><code>training_features.tif</code>: <code>tmi</code> (band 14), <code>iso_grav_anom</code> (13), <code>cond_surf</code> (17); <code>det_elev_slope</code> (19) only for a weak relief confounder gate.</td>
+<td>At Gaussian scales σ=2 and 5 cells, estimate TMI gradient normals and compare absolute flank slopes sampled ±2 cells along each normal. Asymmetry is <code>abs(s_plus-s_minus)/(s_plus+s_minus+1e-8)</code>. Multiply its cross-scale geometric mean by cross-scale TMI edge strength, σ=3 gravity-gradient strength, a bounded positive conductivity residual <code>(clip(z,0,5)/5)</code>, and the fixed weak relief gate <code>1/(1+unit(abs(det_elev_slope)))</code>. The full transform is J = <code>sqrt(mag_edge_2*mag_edge_5) * sqrt(asym_2*asym_5) * sqrt(grav_edge_3) * (0.5+0.5*cond_halo) * relief_gate</code>. All quantile scaling uses the feature footprint only, never labels.</td>
+<td>A buried damage/alteration zone could produce a one-sided magnetic response with a density boundary and conductive halo despite little surface relief, so the signature is not defined by the existing fault raster. Competing explanations include lithologic contacts, alluvial/saline conductivity, survey-line residuals, and magnetic-source geometry. Falsify if the marginal MINE estimate is indistinguishable from its null, the spatially blocked paired comparison does not beat the frozen D benchmark, or gains are restricted to rugged/mapped settings.</td>
+<td>The current repo's D is a topographic gradient/Laplacian ratio × magnetic edge; A measures multiscale magnetic-direction persistence; E uses magnetic/gravity edge magnitudes and a conductivity halo; H uses RTP/tilt/depth/gravity. None computes signed/flank-asymmetric magnetic edge profiles. Sibling work has one-sided <em>topographic</em> scarp features and magnetic texture, so the underlying concept of asymmetry is not globally new. Local feature cost low–medium; sampling/interpolation across a 5.17M-pixel footprint.</td>
+<td><strong>Moderate, unquantified</strong> prior; only viable local candidate for the locked holdout. <strong>Low–medium</strong> CPU cost, no new dataset.</td>
+</tr>
+<tr>
+<td>2 / K — multiscale cross-field junction persistence</td>
+<td><code>tmi</code> (14), <code>iso_grav_anom</code> (13), optionally <code>cond_surf</code> (17).</td>
+<td>At σ=2 and 5, form magnetic and gravity gradient structure tensors. Combine co-located edge strength with the low-eigenvalue fraction of each tensor (multi-directional junctionness), requiring that the junction persists at both scales. Do not use catalog geometry or a pre-existing prediction.</td>
+<td>Intersections/transfer zones can provide connected permeability; a covered basin can conceal their surface trace. A lithologic contact network or anisotropic survey artefact can imitate the signature. Falsify with unstable MINE, holdout failure, or sensitivity to the selected smoothing scale.</td>
+<td>Different from the repo's scalar co-edge E and depth/gravity discordance B because it targets a locally multi-directional, scale-persistent <em>junction</em>, not just boundary amplitude or pairwise direction. Siblings have related intersection-density and multi-physics-coincidence experiments, so this is an incremental topology hypothesis, not an untried physical principle.</td>
+<td><strong>Moderate</strong>, but lower than J after sibling-overlap penalty; <strong>medium</strong> feature cost and validation cost. Uses local data.</td>
+</tr>
+<tr>
+<td>3 / L — signed basin-side basement/gravimetric step</td>
+<td><code>depth_to_base_surf</code> (15), <code>iso_grav_anom</code> (13), <code>cond_surf</code> (17), <code>det_elev_slope</code> (19).</td>
+<td>Use the local normal of the basement-depth gradient; compare the signed gravity and conductivity residual on opposing sides of that normal at σ=3 cells. Retain co-polarized basement/gravity transitions with a weak-conductivity-side response; downweight high relief. Freeze the polarity convention before inspecting label results.</td>
+<td>Buried normal-fault throw and basin fill can yield a basement/density contrast without a mapped scarp. Stratigraphic boundaries, basin facies and conductivity from saline/clay-rich fill are strong alternatives. Falsify if signal follows broad basin edges and not held-out fault traces.</td>
+<td>Unlike B's squared directional discordance, C's conductivity edge × depth edge, or D's surface-relief step, L explicitly tests the <em>sign and side</em> of basement/gravity transitions. Related concealed-basement-step tests exist in sibling work, so novelty is limited.</td>
+<td><strong>Low–moderate</strong> expected gain; <strong>low</strong> compute cost. Local data available.</td>
+</tr>
+<tr>
+<td>4 / X — flight-line residual control (blocked; not viable this run)</td>
+<td>Official GeoDAWN Area-2 raw magnetic/radiometric flight-line data and flight paths, paired with provided <code>tmi</code>/<code>tmi_hg</code>/<code>tmi_vg</code>.</td>
+<td>Estimate line-specific residuals and across-line repeatability after the released leveling/micro-leveling; penalize survey-parallel, non-reproducible lineaments and retain anomalies corroborated on adjacent traverses.</td>
+<td>Would target true geological structure that persists across flight lines while rejecting acquisition artefacts, rather than learning map-wide stripes. The USGS says Area 2 traverse lines are 400 m apart at azimuth 90° and tie lines 4 km apart; magnetics were tie-line leveled and micro-leveled. Those processing facts mean a residual-artifact problem is possible but not established.</td>
+<td>No acquisition-geometry or line-level correction exists in this repo's 19-band model. The official ScienceBase item lists <code>22103_mag_a2_csv.zip</code> (3.74 GB), <code>22103_spec_a2_csv.zip</code> (427.33 MB), and gridded GeoTIFF bundles. The official listing was readable, but direct shell HTTPS to <code>sciencebase.gov</code> failed TLS in this sandbox. <strong>The raw bytes were not obtained</strong>, so this is explicitly blocked, not viable/validated and not used for the TIF.</td>
+<td>Potentially <strong>moderate</strong> precision benefit if a residual artefact is measured; <strong>very high</strong> data/processing cost. Not ranked as an implementable candidate until official bytes and schema are acquired.</td>
+</tr>
+</tbody>
+</table>
+<h3>Research sources</h3>
+<ul>
+<li><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/">DrivenData problem, data layers, incomplete labels, metric and raster contract</a></li>
+<li><a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/968/">DrivenData about: geological fault traces and geophysical/topographic mapping context</a></li>
+<li><a href="https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516/4">DrivenData staff clarification: pixel-exact known-fault mask; near-catalogue new truth can exist</a></li>
+<li><a href="https://doi.org/10.5066/P93LGLVQ">USGS GeoDAWN data release, DOI 10.5066/P93LGLVQ</a> and <a href="https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and">USGS survey description</a></li>
+<li><a href="https://pubs.usgs.gov/publication/70221765">USGS Great Basin blind geothermal systems study</a>: its abstract describes one blind-system example with a displacement-transfer zone, fault intersections, gravity gradients, magnetic anomaly, temperature and resistivity evidence. This motivates a falsifiable junction hypothesis; it does <strong>not</strong> prove J or K will generalize.</li>
+<li><a href="https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7">Official USGS ScienceBase GeoDAWN item and attached-file list</a></li>
+</ul>
+<h2>Locked analysis before feature implementation</h2>
+<ol>
+<li>Build J, K and L from the checksum-pinned 19-band mirror only; no fault labels, fault-distance rasters, previous predictions, scores, or hidden labels enter feature construction. Record intermediate feature hashes and finite/range diagnostics.</li>
+<li>Estimate MINE <code>I(feature; public catalogue mask)</code> on all <strong>5,167,373</strong> footprint cells, with the observed natural prevalence, three fixed seeds, all-pixel evaluation and four spatial out-of-fold estimates. Keep negative DV estimates; report nats, seed variability, shuffled-label controls, and the estimator's finite-capacity/selection limitations. MINE ranks are descriptive because catalogue zero is unlabelled and MINE is marginal, not <code>I(Y; feature | existing features)</code>.</li>
+<li>J is the predeclared primary, so the MINE result will not be used to swap in whichever candidate looks best on these same labels. Test fixed HGB settings on the four spatial quadrants with a 1 km training exclusion, equal 0.8% per-fold emission budget and 2.8-cell separation. Compare <code>19-band baseline</code>, the previous <code>19 + D</code> internal benchmark, and <code>19 + D + J</code>; use paired 20 km spatial-block bootstrap and show every fold. No threshold, density, spacing, buffer, or model tuning after seeing holdout results.</li>
+<li>This test is a <strong>catalogue-proxy</strong> test, not a hidden-label test. The earlier H33 public score has no organizer-published file hash; the sibling H33 <code>live-mirror</code> receipt reports only 2 of 6 historical orderings reproduced (3 of 6 after its own calibration), and its <code>h33_holdout</code> receipt relies on an estimated hidden prevalence plus public-catalogue/SGMC proxies. It is useful context, but not a compatible independently reproducible current-best checkpoint. A positive J-vs-D result will therefore not authorize a competition slot; a comparable current-best checkpoint and hidden-target evidence remain unavailable.</li>
+<li>Packaging is separate from validation. If the fixed J arm does not beat D under the paired gate, no J upload is recommended. Any download offered remains a research artifact, not a leaderboard claim; never upload automatically. Preserve the existing unique TIFF and its exact receipt until a replacement is both independently reproducible and better under the preregistered comparison.</li>
+</ol>
+<h2>Post-analysis implementation review — amendment recorded separately</h2>
+<p>A final code audit found that the implemented L array did not match the locked signed opposing-side formula above. The existing L-named MINE values are therefore exploratory for an unsigned as-coded variant, not evidence for this registered hypothesis. The exact mismatch, original hashes and numerical record are preserved in <a href="evidence/hypotheses-v3-review-amendment.md">the v3 review amendment</a>. J and K definitions are unaffected; the primary J comparison and closed slot decision remain unchanged. This post-analysis note does not retroactively alter the preregistration.</p>
+<h2>Reproducibility / amendment policy</h2>
+<p>Record source-data checksums, exact parameter values, MINE seeds and full-fold results in a dated JSON receipt. If a source field, split, transform, seed, or budget must change, do not overwrite this protocol: add a versioned amendment before rerunning. Keep historical failed results and uncertainty intact.</p><h2>Complete review, historical context and next steps</h2><h1>Scientific review and decision record — 2026-10-05 (latest status v3)</h1>
+<h2>Current decision (v3 — preregistered analysis and holdout audit)</h2>
+<p><strong>Submission gate: CLOSED.</strong> Keep the unique D GeoTIFF as a research/download artifact, not a recommended weekly submission. The file passes the local disk-reread contract and public-artifact uniqueness comparison, but no portal acceptance or hidden-fault score exists. Its 0.7% / 3.0-pixel / catalogue-exclusion / tip-protected final emission was not tested against a comparable current-best holdout. The earlier v2 <code>+0.00807</code> result is a catalogue-proxy feature comparison, not proof that the final TIF beats H33 or hidden test truth.</p>
+<p><strong>Why no current-best comparison is available.</strong> At pinned GEMSDOE32 commit <code>b63ebab7dbcf9238422ebbc2dbc4addf84bed11b</code>, <code>src/gems32/holdout.py</code> sets <code>COLLAR_PX=15</code> and <code>DOMAIN_ERODE=12</code>; <code>evidence/h33_holdout.json</code> describes a 30-pixel collar and 20-pixel erosion. The holdout code requires <code>data/external/derived_sgmc_faults_100m_u8.tif</code>, which is absent from that tracked tree, along with the exact derived masks/checkpoints needed for reconstruction. <code>evidence/live_mirror_validation.json</code> reports only <strong>2/6</strong> historical score orderings reproduced (3/6 after its prevalence calibration). It also estimates hidden-truth prevalence from prior scores. This is interesting owner-reported research, not an independently reproduced hidden-label benchmark. The public leaderboard does not expose an artifact hash tying the user-reported 0.2778 to the H33 raster.</p>
+<p><strong>v3 preregistration and results.</strong> Hypotheses J/K/L were fixed in <a href="evidence/hypotheses-v3-preregistered.md">the preregistration</a> before computing their features or MINE estimates; GeoDAWN raw flight-line candidate X is explicitly blocked because its official raw files were not obtained. J's full-label MINE mean is <strong>4.66e-05 nats</strong>, spatial OOF mean <strong>1.95e-05</strong> (three seeds; shuffled null mean -2.83e-07). K: full-fit 3.32e-05, OOF 7.02e-06. The stored L values (full-fit 1.72e-05, OOF 1.69e-05) are <strong>exploratory only</strong>: final code review found the implemented unsigned conductivity-gradient variant differs from preregistered L's signed opposing-side transform. See <a href="evidence/hypotheses-v3-review-amendment.md">the review amendment</a>. J/K's results and the J comparison are unaffected. MINE numbers are marginal catalogue-label dependence estimates, not conditional value or hidden-fault information. Feature normalization uses the full footprint without labels, so preprocessing is transductive rather than fold-local and the spatial folds are not strict independent-pipeline validation. The primary paired spatial test gives J+D vs D <strong>+0.000712 DTI</strong>, 2/4 folds positive, 20-km block-bootstrap 95% interval <strong>[-0.004698, +0.006037]</strong> — <strong>FAIL</strong>. J+D vs the 19-band baseline is +0.008785; that gain is mostly inherited from D and does not establish J's incremental value. See <a href="evidence/mine-results-v3.json">MINE v3</a>, <a href="evidence/validation-v3.json">spatial validation v3</a>, and <a href="evidence/slot-gate.json">slot gate</a>.</p>
+<p><strong>Three-pass review outcome.</strong> (1) Re-read the full README/user brief and AGENTS rules, inspected the existing generator, validator, holdout receipts and feature code. (2) Added fixed J/K/L transforms, synthetic unit tests, all-footprint MINE and locked four-quadrant comparisons; all inputs and output hashes were recorded. (3) Audited sibling holdout evidence against its code; found and logged an L implementation/preregistration mismatch instead of presenting its MINE row as confirmatory; corrected the generator so it cannot mark an artifact approved; and changed the site/README status to keep the slot gate visibly closed. No new TIF or portal submission was made, and no score is claimed.</p>
+<h2>Historical v2 result — feature-proxy evidence only; not submission validation</h2>
 <p><strong>New MINE screen on 9 features (5.17M rows, 60,988 positives, H(Y)=0.064129 nats, 3 seeds, 12 OOF folds, shuffled nulls):</strong> Full-fit mean nats — F_transtensional_corridor 0.00028387 (highest), D_topographic_step_proxy 0.00014835, I_drainage_deflection_curvature 0.00012835, E_basin_concealed_coedge 6.86e-05, G_quake_fabric_lineament 7.03e-05, H_rtp_tilt_basement_step 4.54e-05, A 1.70e-05, C 1.66e-05, B 1.20e-06. OOF weighted mean: D 0.00012556 (stable positive), I 0.00011102, H 3.54e-05, E 2.81e-05, G 1.17e-05, A 4.25e-06, C 9.09e-06, B -2.16e-05 (negative), F -7.31e-05 (negative, spatial overfit). Null means ~ -4e-07, so D and I are &gt;300× null.</p>
-<p><strong>Validation v2 (same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation, 200k negatives, 180+ 20km blocks, 1000 bootstraps):</strong> Baseline 0.13144859. plus_D 0.13952240 Δ+0.00807381 4/4 folds positive, 95% CI [0.00109,0.01549] excludes zero — <strong>first feature to pass strict gate</strong>. plus_I 0.13387 Δ+0.00242 3/4 CI crosses zero. plus_F 0.13491 Δ+0.00346 4/4 but CI crosses zero. plus_E -0.00040 1/4. plus_D_I 0.13864 Δ+0.00719 3/4 CI [-0.00074,0.01503] crosses zero slightly. plus_all_new 0.13642 Δ+0.00497 3/4.</p>
-<p><strong>Why this matters for the prompt's MINE instruction:</strong> Full-label MINE filtered out B (near-zero) correctly — it failed validation. F had highest full-fit but negative OOF, warning of spatial overfit, and indeed its validation CI crosses zero despite 4/4 folds. D had highest stable OOF and passed validation, confirming MINE OOF as less noisy than single-number ablation on ~1% positives.</p>
-<p><strong>New submission:</strong> Full-data HGB 19 + D_topographic_step_proxy, 0.7% density (36,171 px), 3.0px separation (vs 2.8), 200m catalogue exclusion with tip protection (retain within 3px of endpoints to preserve splay/tip corrections that H33's blind 200m prune would delete). No prior prediction as input. Pixel-content SHA ecfbf59e2b48, 71,947 pixels different vs H33 reference, 0 duplicates vs 208 same-grid prior rasters (254 paths, 210 blobs). Second candidate D+I 0.65% density also generated. Both have zero and nan outside twins, all-finite primary min 0 max 1, no nodata sentinel, passes local contracts. Portal acceptance not certified, but avoids known range failures (finite [0,1], no -3.4e38 sentinel, no NaN interior).</p>
-<p><strong>How to beat 0.2778 / 0.3262:</strong> DTI = T / (0.2 T + 0.2 F + 0.8 G). Improvement requires (1-0.2D)ΔT &gt; 0.2 D ΔF. At D=0.2778, 1 unit FP needs 0.05883 coverage. Thinning (121k→44k→37k) raised credit per pixel by removing redundant mass (H28 analysis: ρ 1.429→1.179). Our improvements: (1) better detector (D validated +0.008 catalogue-proxy), (2) better emission (3.0px reduces overlap, tip protection preserves high-value corrections), (3) lower density (0.7% vs 0.8%) raises mean credit. Leaderboard 0.3262 needs ~25% more credit per pixel than 0.26 at same mass — requires genuinely new faults, not just budget tuning. Catalogue-proxy +6% is not hidden-fault guarantee.</p>
+<p><strong>Historical validation v2 (same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation, 200k negatives, 180+ 20km blocks, 1000 bootstraps):</strong> Baseline 0.13144859. plus_D 0.13952240 Δ+0.00807381 4/4 folds positive, 95% CI [0.00109,0.01549] excludes zero under that internal catalogue-proxy design; this did not pass the current-best competition promotion gate. plus_I 0.13387 Δ+0.00242 3/4 CI crosses zero. plus_F 0.13491 Δ+0.00346 4/4 but CI crosses zero. plus_E -0.00040 1/4. plus_D_I 0.13864 Δ+0.00719 3/4 CI [-0.00074,0.01503] crosses zero slightly. plus_all_new 0.13642 Δ+0.00497 3/4.</p>
+<p><strong>What the v2 MINE screen does and does not show:</strong> B had a near-zero marginal estimate and was not independently model-tested, so no validation failure can be attributed to it. F had the highest full-fit estimate but negative spatial OOF; its model comparison CI crossed zero despite 4/4 positive folds, consistent with spatial instability but not proving MINE caused it. D had the highest stable OOF estimate in that screen and a positive v2 catalogue-proxy comparison. This is a useful prior internal result, not a controlled estimate of hidden-fault performance or evidence that the final emitted D raster beats the current-best H33 holdout.</p>
+<p><strong>Historical research artifact:</strong> Full-data HGB 19 + D_topographic_step_proxy, 0.7% density (36,171 px), 3.0px separation, 200m catalogue exclusion with tip protection, and no prior prediction as input. Pixel-content SHA ecfbf59e2b48; 71,947 pixels differ from the H33 reference; no duplicates against 208 same-grid public raster blobs. Both zero- and NaN-outside twins pass their local contracts. This does not validate the final emission policy against a comparable current-best holdout or certify portal acceptance. Do not upload based on this result.</p>
+<p><strong>Scoring mechanics, not a win forecast:</strong> DTI = T / (0.2 T + 0.2 F + 0.8 G). A change improves DTI exactly when <code>(1-0.2D)ΔT &gt; 0.2DΔF</code> for a fixed truth set. At D=0.2778, one unit of additional false-positive mass needs about 0.05883 coverage to break even. A sibling H28 owner analysis reported that thinning reduced kernel overlap (ρ 1.429→1.179); sparse emission is therefore a plausible hypothesis, not a causal explanation of H33's reported score. The historical D-feature result was +0.00807 on an incomplete catalogue proxy, while the final 0.7% / 3.0px / tip-protected artifact policy has not been evaluated against a compatible current-best holdout. Lowering density and retaining endpoint-near pixels are heuristic tradeoffs, not demonstrated score improvements. The public 0.3262 leader remains untested here.</p>
 <h2>Answer: why did H33-2-B2 reach the reported 0.2778?</h2>
 <p><strong>Evidence separation.</strong> The user attributes 0.2778 to GEMSDOE32 H33-2-B2. The official leaderboard shows participant extradr19 at 0.2778, but does not expose the submitted filename or raster hash. The owner site still says “UNSCORED”. Thus the score-to-file mapping is <strong>user-reported</strong>, not independently organizer-verified. The live leaderboard leader is <strong>0.3262</strong>, ahead of 0.3222 and 0.3195, as checked on October 5.</p>
 <p><strong>What we can verify.</strong> We retrieved the H33 raster (SHA-256 in the submission manifest), reviewed its owner documentation and h33 source modules, and read the official metric and staff clarification. H33 retains sparse dots from a prior field and removes predictions within two pixels (200m) of the known catalogue. The official exclusion is <strong>pixel-exact</strong>, not a 200m buffer. Near-catalogue pixels are still penalized when far from new-fault truth; new truth may also occur near the catalogue. H33's wider buffer is an empirical heuristic, not an official rule.</p>
@@ -14,7 +91,7 @@
 <p>A change improves D exactly when <code>(1 - 0.2 D) ΔT &gt; 0.2 D ΔF</code> (fixed truth set and positive denominators). This is the correct coupled condition; the old “each dot breaks even at 0.2 D” is only an approximation under additional assumptions. For a new unit of <em>false-positive</em> mass at D=0.2778, required additional coverage is about 0.05883. Do not confuse per-dot coverage with probability of a true pixel: one dot can cover multiple truth pixels.</p>
 <p><strong>Can we exceed 0.2778 / 0.3262?</strong> It is possible in principle; it is not demonstrated here. The ratio 0.3262/0.2778 is about 1.174, but a 17.4% score gain is NOT a proven 17.4% required gain in detector information or accuracy. DTI is nonlinear and the hidden distribution differs from the catalogue. Improving geological discrimination, localization, and nonredundant coverage is a sound route. Tuning a count or filename for uniqueness is not.</p>
 <h2>Scientific basis and distinct hypotheses</h2>
-<p>The four preregistered hypotheses, specific layers, signatures, missing-catalogue argument, falsifiers and qualitative opportunity/cost ranking are in <a href="evidence/hypotheses-preregistered.md">hypotheses-preregistered.md</a>. No numerical expected improvement was invented. All inputs are available in the measured 19-band mirror; no ASTER, InSAR or MT external volume was secretly simulated.</p>
+<p>The v1 and v2 preregistrations are preserved as historical records. The newest pre-feature preregistration with exact J/K/L transforms, rank, falsifiers and the blocked X data request is <a href="evidence/hypotheses-v3-preregistered.md">hypotheses-v3-preregistered.md</a>. No numerical expected improvement was invented; GeoDAWN raw line data were not downloaded or used.</p>
 <p>USGS describes GeoDAWN magnetics as information about subsurface structure/geology and radiometrics as information about surface geology/soil composition. It records 400m flight-line spacing for Area 2 and variable terrain clearance. Therefore interpolation onto 100m cells does <strong>not</strong> imply 100m resolving power; east-west flight-line artifacts are a key negative control for the next session. <a href="https://www.usgs.gov/data/geodawn-airborne-magnetic-and-radiometric-surveys-northwestern-great-basin-nevada-and">USGS GeoDAWN</a>.</p>
 <p>A USGS Battle Mountain study jointly models gravity, magnetics and MT, and reports correspondence between gravity-derived basement and the base of shallow conductive anomalies. That supports testing multimodal structural constraints, but does not prove that every discordance or conductive edge is a fault. <a href="https://pubs.usgs.gov/publication/70271418">1</a>.</p>
 <p>Fault intersections and stepovers can concentrate geothermal fluid pathways; detailed structural characterization matters beyond merely recognizing a line on a raster. This motivates future geometry-aware tests, not a claim that our predicted dots are geothermal vents. <a href="https://www.osti.gov/servlets/purl/1110517">3</a>.</p>
@@ -77,7 +154,7 @@
 <li>Band descriptions are not an authoritative data dictionary: <code>tc</code> says “tilt angle or total curvature”; <code>depth_to_base_surf</code> says basement while official prose says conductive base. Baseline uses band numbers, but geological interpretation of ambiguous fields needs the original metadata. H38-B remains speculative for this reason.</li>
 <li>Four hypotheses are novel relative to the original synthetic repo; related physics/transforms already exist in sibling work. We reviewed 36 entry pages plus selected H33 source modules, not every line of every sibling repository. No worldwide novelty claim.</li>
 <li>Exact cause of the user's portal range error is unknown without the rejected file/log. Actual NaN, infinity, out-of-range values and feature nodata sentinels are checked here. A nodata tag alone was not proven to cause that error.</li>
-<li>Official prose says null/NaN outside. The primary all-finite/zero encoding matches the user's reportedly accepted H33 style and avoids NaN range checks; a NaN-outside twin is also provided. Both pass their explicit local contracts. Portal acceptance is NOT certified.</li>
+<li>Official prose says null/NaN outside. The primary all-finite/zero encoding matches the H33 reference's zero-outside encoding and avoids non-finite values; whether the portal accepts it is untested. A NaN-outside twin is also provided. Both pass their explicit local contracts. Portal acceptance is NOT certified.</li>
 <li>Direct hidden labels, private-test scores, competition account access and geological field confirmation remain unavailable. CPU training worked; “GPU required” was false for this implementation.</li>
 <li>The record includes historical user scores that cannot be tied to public file hashes independently; no invented forecasts or inferred hidden fault counts are used.</li>
 </ol>
@@ -85,153 +162,17 @@
 <ul>
 <li>Pass 1: recover real data; withdraw synthetic claims; preregister hypotheses; implement/test actual features, MINE, spatial models, metric and new artifact.</li>
 <li>Pass 2: check derivative gradients, empty-truth metric behavior, absent data, sentinel/NaN/transform failures; verify finite artifact bytes; audit label-derived template, natural-prevalence MINE, selection leakage and geometry.</li>
-<li>Pass 3: independently compare raster content across prior public artifacts; check web download paths and archive membership; run CI; confirm closed promotion gate and no leaderboard promise; inspect PR and Pages deployment.</li>
+<li>Pass 3: independently compare raster content across prior public artifacts; check web download paths and archive membership; run local tests; confirm the closed gate and no leaderboard promise; inspect the generated site. PR checks and Pages deployment must be verified after publication.</li>
 </ul>
 <h2>Next session priorities</h2>
 <ol>
 <li>Freeze nested spatial splits BEFORE exploring D. Refit the strongest prior method fold-locally on exactly the same splits; use bootstrap of spatial blocks plus repeated model fits.</li>
 <li>Use D's small but consistent marginal signal as a hypothesis, not as established incremental information. Compare joint/conditional information with interactions; add spatially preserved null controls and critic-capacity/step convergence checks.</li>
+<li>Before any further L experiment, freeze an exact versioned side-contrast transform, sign convention and sampling distance; the existing L MINE values are exploratory only. See <a href="evidence/hypotheses-v3-review-amendment.md">the code-review amendment</a>.</li>
 <li>Obtain genuine organizer feature metadata and the prior detector's exact raw-data recipe. Resolve <code>tc</code>/conductive-base semantics and template provenance.</li>
 <li>Test flight-line orientation negatives, gravity/magnetic lithologic-contact confounders, and genuine 1m LiDAR on manageable blocks. Genuine structural specificity is more promising than arbitrary dot counts.</li>
 <li>Calibrate an off-catalogue analogue using faults withheld from BOTH training and exclusion maps, with source-vector connected-component buffering; do not automatically equate this to hidden discoveries.</li>
 <li>Only after a valid current-best comparison passes should the account holder authorize a weekly slot. Preserve final-round discovery value; no guaranteed prize or score is possible.</li>
 </ol>
 <h2>Rules and AI disclosure</h2>
-<p>The complete parsed September 2026 official rules were read (all seven text chunks). Sections 3.2–3.5 specify three submissions per week, one final selection across both rounds, reproducible code/resources and disclosure of generative-AI assistance in the narrative. This project used an Arena.ai coding assistant for research synthesis, source review, code generation, testing and documentation. Raster predictions were computed by the documented measured-data statistical pipeline, not generated as imagined geological imagery. The original synthetic artifacts were withdrawn. The account holder must truthfully certify their own eligibility; this agent cannot certify citizenship, team status or legal rights on their behalf.</p><hr><h2>hypotheses-preregistered.md</h2><h1>Preregistration — 2026-10-05, before feature computation</h1>
-<p>Evidence status: hypotheses, not geological discoveries or numeric forecasts. Ranking is expert judgement on opportunity/cost, not measured expected DTI. No new external acquisition needed: all layers below are present in the checksum-restored 19-band competition mirror. Prior code in this repo was synthetic. GEMSDOE32 already implements multiscale Hessians, orientation consensus, drainage collinearity, conductive boundaries and clay-cap breach; the distinctions below are narrower than claiming these physics were never tried anywhere.</p>
-<table>
-<thead>
-<tr>
-<th>Rank / ID</th>
-<th>Measured layers and exact targeted transform</th>
-<th>Why potentially unmapped; falsification</th>
-<th>Difference and cost</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1 / A quiet-persistent magnetic edges</td>
-<td>TMI; detrended elevation. Gaussian derivatives at sigma 1, 3, 9 cells; signed gradient-direction agreement times geometric mean of normalized gradient magnitudes; suppress high local topographic variance.</td>
-<td>Buried basin structures may retain a magnetic discontinuity without conspicuous relief. Lithologic contacts and acquisition stripes are serious alternatives. Fails if improvement is confined to rugged mapped range fronts.</td>
-<td>Cross-SCALE magnetic stability gated by low relief, rather than cross-PHYSICS orientation consensus. Low, minutes CPU. Best feasibility-adjusted opportunity, numerical gain unknown.</td>
-</tr>
-<tr>
-<td>2 / B depth-discordant gravity boundary</td>
-<td>Isostatic gravity; depth to conductive base. Absolute directional disagreement of Gaussian gradients, weighted by both gradient magnitudes.</td>
-<td>A basement density discontinuity with differing conductive geometry may locate concealed structural boundaries. Nonfault lithology is a confounder.</td>
-<td>Tests discordance rather than consensus or MT edge amplitude alone. Low cost; weaker geological specificity than A.</td>
-</tr>
-<tr>
-<td>3 / C conductivity-depth residual edge</td>
-<td>Surface conductivity; conductive-base depth. Remove broad local conductivity background, normalize by local variability; multiply residual edge by a depth edge.</td>
-<td>Possible narrow conductive pathways against smooth regional conductance; clays/saline basin fill can imitate them. Spatial stationarity of a pathway is not established.</td>
-<td>Local background-standardized anomaly boundary rather than an unconditional conductivity edge or invented ASTER field. Low cost; no temperature claim.</td>
-</tr>
-<tr>
-<td>4 / D asymmetric topographic step</td>
-<td>Detrended elevation; TMI. Signed gradient vs Laplacian ratio (step-versus-curvature discriminator), multiplied by magnetic edge strength.</td>
-<td>Subtle alluvial step may be missed in regional mapping; roads/drainage/lithology are alternative causes, 100m grid limits scarp resolution.</td>
-<td>Scale-normalized step morphology rather than Hessian ridge or random fault lines. Low cost, lowest opportunity due to resolution.</td>
-</tr>
-</tbody>
-</table>
-<h2>Locked experiment</h2>
-<ul>
-<li>Compute all four real feature surfaces, no catalogue or prior submission as feature inputs.</li>
-<li>MINE: binary-label DV bound, natural prevalence, exact binary product marginal, EMA gradient correction, three seeds, spatial OOF evaluation over every usable catalogue pixel. One globally shuffled-label null per feature. Preserve negative estimates, report H(Y) and units nats. Descriptive full-population screening is NOT used to retroactively choose the locked holdout experiment.</li>
-<li>Test A, the top preregistered hypothesis, against a fresh 19-band HistGradientBoosting baseline using four spatial quadrants, 1km training exclusion at quadrant boundaries, fixed hyperparameters and the same per-area sparse emission budget / 2.8-pixel separation. Missing feature values get fold-training medians. No location or distance-to-label features.</li>
-<li>Report pooled DTI, quadrant deltas, and paired 20km-block bootstrap interval (conditional on fitted models; not total uncertainty). No tuning to these results in this session.</li>
-<li>Existing H33 file is NOT a valid holdout-best benchmark: it was engineered using the full catalogue and no compatible unseen-label holdout checkpoint exists here. Show descriptive comparison only, explicitly non-comparable.</li>
-<li>Generate a new reproducible candidate from measured features, never copy prior predictions. Generation is NOT promotion. No competition slot used unless a valid current-best comparison and gate exist. Hidden-label performance cannot be measured here; catalogue labels are incomplete positive/unlabelled proxies.</li>
-<li>Uniqueness: raster pixel-content digest, byte digest, comparisons against retrievable prior rasters. Never claim exhaustive uniqueness against unobserved/private artifacts.</li>
-</ul>
-<p>Semantic correction during review (no transform/result change): D uses gradient magnitude divided by absolute Laplacian response, so it is a step proxy, not an explicitly asymmetric signed-profile detector. Exported name corrected to D_topographic_step_proxy.</p><hr><h2>hypotheses-v2-preregistered.md</h2><h1>Preregistration v2 — 2026-10-05 (expanded after first MINE screen)</h1>
-<p>Evidence status: hypotheses, not geological discoveries. Ranking below combines expert judgement, MINE full-label screening (5.17M rows, 60,988 positives, H(Y)=0.064129 nats), and spatial holdout validation (4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation). No new external data required: all layers are in the 19-band checksum-restored mirror. GEMSDOE32 already implements multiscale Hessians, orientation consensus, drainage collinearity, conductive boundaries and clay-cap breach; distinctions below are narrower than claiming these physics were never tried anywhere in the 36 sibling repos.</p>
-<h2>New candidates E–I (not in original 4)</h2>
-<table>
-<thead>
-<tr>
-<th>Rank / ID</th>
-<th>Layers &amp; exact transform</th>
-<th>Physical signature</th>
-<th>Why potentially unmapped; falsifier</th>
-<th>Difference vs this repo &amp; cost</th>
-<th>Expected ΔDTI (catalogue-proxy) &amp; MINE</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1 / E_basin_concealed_coedge</td>
-<td>tmi, iso_grav_anom, det_elev_slope, cond_surf. Gaussian gradients sigma 2 &amp; 5 for mag and gravity; co-edge = sqrt(unit(</td>
-<td>∇mag2</td>
-<td>)*unit(</td>
-<td>∇mag5</td>
-<td>)*unit(</td>
-</tr>
-<tr>
-<td>2 / F_transtensional_corridor</td>
-<td>geod_shearrate, geod_dilaterate, geod_2ndinv, det_elev. s=unit(</td>
-<td>shear</td>
-<td>), d=unit(</td>
-<td>dilat</td>
-<td>), sec=unit(2ndinv); curv=unit(</td>
-</tr>
-<tr>
-<td>3 / G_quake_fabric_lineament</td>
-<td>ieq_n100a15 (earthquake intensity), deq_n100a15 (distance to quake), tmi_hg, tmi_vg. Fabric = unit(sqrt(</td>
-<td>∇hg</td>
-<td>^2+</td>
-<td>∇vg</td>
-<td>^2)); eq_density=unit(ieq), eq_close=1/(1+unit(deq)); final = sqrt(eq_density<em>eq_close)</em>fabric</td>
-</tr>
-<tr>
-<td>4 / H_rtp_tilt_basement_step</td>
-<td>rtp, tc (tilt angle), depth_to_base_surf, iso_grav_anom_hg. tc_edge = unit(</td>
-<td>∇tc sigma2</td>
-<td>); depth_edge = unit(</td>
-<td>∇depth sigma3</td>
-<td>); grav_hg = unit(</td>
-</tr>
-<tr>
-<td>5 / I_drainage_deflection_curvature</td>
-<td>det_elev, iso_grav_anom. Second derivatives gxx,gyy,gxy sigma1; curvature mag sqrt(gxx^2+2gxy^2+gyy^2); curv_norm=unit(</td>
-<td>curv</td>
-<td>); grav_edge=unit(</td>
-<td>∇grav sigma2</td>
-<td>); final=curv_norm*grav_edge</td>
-</tr>
-</tbody>
-</table>
-<h2>Ranking by expected DTI improvement (catalogue-proxy) and implementation cost</h2>
-<p>Feasibility-adjusted ranking (expert + MINE OOF + validation):</p>
-<ol>
-<li><strong>D_topographic_step_proxy</strong> (original) — MINE OOF 0.000125 nats, validation +0.00807 ΔDTI, 4/4 folds, CI [0.00109,0.01549] excludes zero. <strong>VALIDATED</strong>. Low cost. Top.</li>
-<li><strong>I_drainage_deflection_curvature</strong> — OOF 0.000111 nats, validation +0.00242, 3/4 folds, CI crosses zero. Medium cost, second.</li>
-<li><strong>F_transtensional_corridor</strong> — full-fit highest (0.000283) but OOF negative, validation +0.00347 4/4 but CI crosses zero. Low cost, third (needs spatial regularization).</li>
-<li><strong>E_basin_concealed_coedge</strong> — OOF positive small, validation negative. Low cost, fourth.</li>
-<li><strong>G, H</strong> — smaller MI, not solo validated, medium/low cost, lower expected.</li>
-</ol>
-<h2>Locked experiment v2</h2>
-<ul>
-<li>Compute all nine surfaces, no catalogue or prior submission as feature inputs.</li>
-<li>MINE: same protocol as v1 (DV bound, natural prevalence, exact binary product marginal, EMA, 3 seeds, 4 spatial folds, 1 shuffled null per feature).</li>
-<li>Validation v2: test baseline_19 vs plus_D, plus_I, plus_E, plus_F, plus_D_I, plus_D_E_I, plus_all_new (6 new features) using same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation. No tuning after seeing results.</li>
-<li>Result: D alone is best and passes strict gate (4/4 folds, CI&gt;0). D+I is second but CI crosses zero.</li>
-<li>Generate new submission: full-data HGB 19+D, 0.7% density, 3.0px separation, 200m catalogue exclusion with tip protection (retain within 3px of fault endpoints). No prior prediction as input. Second candidate D+I 0.65% density.</li>
-<li>Uniqueness: pixel-content digest, byte digest, compare against 208 same-grid prior rasters.</li>
-</ul>
-<h2>External data check</h2>
-<ul>
-<li>USGS 3DEP 1m LiDAR (https://www.usgs.gov/3d-elevation-program) — free, official, could improve D and I (100m grid limits scarp resolution). Not downloaded in this run due to tile volume; next session prioritize selected validation blocks.</li>
-<li>USGS GeoDAWN raw flight-line CSVs (https://doi.org/10.5066/P93LGLVQ) — CC0, could test east-west acquisition artifacts. Not downloaded; core mirror only used.</li>
-<li>GDR 1391 (https://gdr.openei.org/submissions/1391) — CC BY 4.0, 2m temps, wells, seismicity. Metadata inspected, ZIP not acquired; sampling bias needs check before use.</li>
-</ul>
-<p>All ideas use only 19-band mirror; no invented ASTER/MT fields.</p>
-<h2>Limitations</h2>
-<ul>
-<li>MINE full-fit can be optimistic; OOF is diagnostic not unbiased MI; globally shuffled null destroys spatial autocorrelation.</li>
-<li>Catalogue labels are incomplete positive/unlabelled; zero is not confirmed absence; hidden new-fault truth unavailable.</li>
-<li>D's step proxy uses gradient/|Laplacian| ratio, not explicit asymmetric signed profile; name corrected.</li>
-<li>Tip protection uses 8-neighbor count for endpoints, approximate; true fault topology from vector data (NBMG QFaults REST) could be better but not used here.</li>
-<li>Final submission has no validated hidden-fault score; catalogue-proxy improvement does not guarantee leaderboard gain.</li>
-</ul></main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>
+<p>The complete parsed September 2026 official rules were read (all seven text chunks). Sections 3.2–3.5 specify three submissions per week, one final selection across both rounds, reproducible code/resources and disclosure of generative-AI assistance in the narrative. This project used an Arena.ai coding assistant for research synthesis, source review, code generation, testing and documentation. Raster predictions were computed by the documented measured-data statistical pipeline, not generated as imagined geological imagery. The original synthetic artifacts were withdrawn. The account holder must truthfully certify their own eligibility; this agent cannot certify citizenship, team status or legal rights on their behalf.</p><p><a href="evidence/mine-results.json">Historical v2 MINE receipt (nine features)</a> · <a href="evidence/validation-v2.json">Historical v2 proxy receipt</a> · <a href="evidence/submission-manifest.json">Research-artifact manifest</a></p></main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>

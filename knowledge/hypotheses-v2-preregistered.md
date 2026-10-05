@@ -1,4 +1,6 @@
-# Preregistration v2 — 2026-10-05 (expanded after first MINE screen)
+# Preregistration v2 — 2026-10-05 (historical; superseded for promotion decisions)
+
+> **Current status:** the v2 D result is an internal public-catalogue proxy comparison, not a reproducible comparison against the current-best H33 holdout and not validation of the final TIF emission policy. The competition slot gate is closed; see [current research review](research-review.md) and [slot gate](slot-gate.json). The newer pre-feature protocol is [v3](hypotheses-v3-preregistered.md).
 
 Evidence status: hypotheses, not geological discoveries. Ranking below combines expert judgement, MINE full-label screening (5.17M rows, 60,988 positives, H(Y)=0.064129 nats), and spatial holdout validation (4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation). No new external data required: all layers are in the 19-band checksum-restored mirror. GEMSDOE32 already implements multiscale Hessians, orientation consensus, drainage collinearity, conductive boundaries and clay-cap breach; distinctions below are narrower than claiming these physics were never tried anywhere in the 36 sibling repos.
 
@@ -16,7 +18,7 @@ Evidence status: hypotheses, not geological discoveries. Ranking below combines 
 
 Feasibility-adjusted ranking (expert + MINE OOF + validation):
 
-1. **D_topographic_step_proxy** (original) — MINE OOF 0.000125 nats, validation +0.00807 ΔDTI, 4/4 folds, CI [0.00109,0.01549] excludes zero. **VALIDATED**. Low cost. Top.
+1. **D_topographic_step_proxy** (original) — MINE OOF 0.000125 nats, validation +0.00807 ΔDTI, 4/4 folds, CI [0.00109,0.01549] excludes zero. positive historical catalogue-proxy result only; not current-best validation or slot approval. Low cost. Top within the v2 internal screen.
 2. **I_drainage_deflection_curvature** — OOF 0.000111 nats, validation +0.00242, 3/4 folds, CI crosses zero. Medium cost, second.
 3. **F_transtensional_corridor** — full-fit highest (0.000283) but OOF negative, validation +0.00347 4/4 but CI crosses zero. Low cost, third (needs spatial regularization).
 4. **E_basin_concealed_coedge** — OOF positive small, validation negative. Low cost, fourth.
@@ -27,8 +29,8 @@ Feasibility-adjusted ranking (expert + MINE OOF + validation):
 - Compute all nine surfaces, no catalogue or prior submission as feature inputs.
 - MINE: same protocol as v1 (DV bound, natural prevalence, exact binary product marginal, EMA, 3 seeds, 4 spatial folds, 1 shuffled null per feature).
 - Validation v2: test baseline_19 vs plus_D, plus_I, plus_E, plus_F, plus_D_I, plus_D_E_I, plus_all_new (6 new features) using same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation. No tuning after seeing results.
-- Result: D alone is best and passes strict gate (4/4 folds, CI>0). D+I is second but CI crosses zero.
-- Generate new submission: full-data HGB 19+D, 0.7% density, 3.0px separation, 200m catalogue exclusion with tip protection (retain within 3px of fault endpoints). No prior prediction as input. Second candidate D+I 0.65% density.
+- Historical result: D alone had the strongest within-screen catalogue-proxy delta (4/4 folds and a conditional paired-block interval above zero). This is not a compatible current-best benchmark and does not validate the final emitted raster. D+I's interval crossed zero.
+- Generate a unique research artifact: full-data HGB 19+D, 0.7% density, 3.0px separation, 200m catalogue exclusion with tip protection (retain within 3px of catalogue endpoints). No prior prediction as input. This output is not validated against the current-best holdout and is not approved for a slot. Second research artifact D+I 0.65% density.
 - Uniqueness: pixel-content digest, byte digest, compare against 208 same-grid prior rasters.
 
 ## External data check

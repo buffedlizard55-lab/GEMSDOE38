@@ -1,122 +1,125 @@
-"""Build static, evidence-driven Pages. No prediction or score fabricated in the browser."""
+"""Build static, evidence-driven Pages. A local proxy result never opens the slot gate."""
 
-import json, html, shutil
+import html
+import json
+import shutil
 from pathlib import Path
+
 import markdown
 
 ROOT = Path(__file__).resolve().parents[1]
 
+
 def read(name):
     return json.loads((ROOT / "knowledge" / name).read_text())
 
-def esc(x):
-    return html.escape(str(x))
+
+def esc(value):
+    return html.escape(str(value))
+
 
 def layout(title, body, article=False):
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, verified GeoTIFF downloads and transparent validation."><title>{esc(title)} · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap {"article" if article else ""}">{body}</main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, unique GeoTIFF research artifact, and transparent validation."><title>{esc(title)} · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap {"article" if article else ""}">{body}</main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>"""
 
 
-if __name__ == "__main__":
-    m = read("submission-manifest.json")
-    # Prefer v2 validation if present
-    try:
-        v2 = read("validation-v2.json")
-        v_is_v2 = True
-        # also load old for reference
-        try:
-            v_old = read("validation-results.json")
-        except:
-            v_old = None
-    except Exception:
-        v2 = None
-        v_is_v2 = False
-        v_old = read("validation-results.json")
-    mi = read("mine-results.json")
-    u = read("uniqueness-audit.json")
+def note_box(note):
+    return f'''<div class="note-box"><button id="copy-note" type="button">Copy note</button><strong>Artifact distinction note (not submission approval)</strong><p id="submission-note">{esc(note)}</p><span id="copy-status" role="status" class="small"></span></div>'''
+
+
+def main():
+    manifest = read("submission-manifest.json")
+    gate = read("slot-gate.json")
+    mine = read("mine-results-v3.json")
+    validation = read("validation-v3.json")
     feed = read("feed.json")
     sources = read("source-register.json")
+    uniqueness = read("uniqueness-audit.json")
+
     docs = ROOT / "docs"
     evidence = docs / "evidence"
     evidence.mkdir(exist_ok=True)
-    for p in (ROOT / "knowledge").glob("*"):
-        if p.suffix in [".json", ".md"] and p.is_file():
-            shutil.copy2(p, evidence / p.name)
-    primary = "downloads/" + Path(m["files"][0]["path"]).name
-    nan = "downloads/" + Path(m["files"][1]["path"]).name
-    zipfile = primary.replace(".tif", ".zip")
-    note = f"""<div class="note-box"><button id="copy-note" type="button">Copy note</button><strong>Submission note</strong><p id="submission-note">{esc(m["submission_note"])}</p><span id="copy-status" role="status" class="small"></span></div>"""
-    download = f'''<div class="actions"><a class="button" download href="{primary}">↓ Download new GeoTIFF</a><a class="button secondary" download href="{zipfile}">ZIP</a></div><p class="small">All-finite · float32 · EPSG:32611 · 100m<br><a href="{nan}" download>NaN-outside alternative</a> · <a href="downloads/submission-audit.json">Independent format receipt</a></p>'''
+    for path in (ROOT / "knowledge").glob("*"):
+        if path.is_file() and path.suffix in {".json", ".md"}:
+            shutil.copy2(path, evidence / path.name)
+    downloads = docs / "downloads"
+    downloads.mkdir(exist_ok=True)
+    shutil.copy2(ROOT / "knowledge/submission-manifest.json", downloads / "submission-audit.json")
 
-    # Build validation rows
-    if v_is_v2 and v2 is not None:
-        # Show plus_D vs baseline
-        foldrows = ""
-        for r in v2["folds"]:
-            b = r["models"]["baseline_19"]["dti"]
-            d = r["models"]["plus_D"]["dti"]
-            delta = d - b
-            foldrows += f"<tr><td>Quadrant {r['fold']+1}</td><td>{b:.5f}</td><td>{d:.5f}</td><td>{delta:+.5f}</td></tr>"
-        pooled = v2["pooled"]["plus_D"]
-        baseline_pooled = v2["pooled"]["baseline_19"]["dti"]
-        decision_title = "Validated improvement over fresh baseline"
-        decision_body = f"""<p>The <strong>D_topographic_step_proxy</strong> candidate (19 bands + D) scored <strong>{pooled['dti']:.5f}</strong> against a fresh baseline of <strong>{baseline_pooled:.5f}</strong> on spatially withheld <em>known catalogue</em> labels. All 4 folds improved. Bootstrap 95% interval for ΔDTI: {pooled['paired_bootstrap_95'][0]:+.5f} to {pooled['paired_bootstrap_95'][1]:+.5f} (excludes zero), so it passes the strict gate that hypothesis A failed.</p>"""
-        gate_notice = f"""<div class="notice"><strong>Gate: PASS for catalogue-proxy validation.</strong><br>ΔDTI {pooled['delta_vs_baseline']:+.5f} · 4/4 folds positive · 95% CI [{pooled['paired_bootstrap_95'][0]:+.5f}, {pooled['paired_bootstrap_95'][1]:+.5f}]<br>These are catalogue-proxy scores, NOT competition leaderboard scores. Hidden-fault performance remains unmeasured.</div>"""
-        badge = "VALIDATED · 4/4 FOLDS · CI>0"
-        stats_pixels = m["geometry"]["positive_pixels"]
-        download_note = f"New model prediction cells: {stats_pixels} (0.7% density, 3.0px separation, tip-protected)"
-    else:
-        # fallback to old
-        v = v_old if v_old is not None else {}
-        foldrows = "".join(
-            f"<tr><td>Quadrant {r['fold'] + 1}</td><td>{r['models']['baseline_19']['dti']:.5f}</td><td>{r['models']['candidate_19_plus_A']['dti']:.5f}</td><td>{r['delta']:+.5f}</td></tr>"
-            for r in v.get("folds", [])
+    primary_receipt = manifest["files"][0]
+    nan_receipt = manifest["files"][1]
+    primary = "downloads/" + Path(primary_receipt["path"]).name
+    nan = "downloads/" + Path(nan_receipt["path"]).name
+    zip_path = primary.replace(".tif", ".zip")
+    note = manifest["submission_note"]
+    download = f'''<div class="actions"><a class="button" download href="{primary}">↓ Download unique research GeoTIFF</a><a class="button secondary" download href="{zip_path}">ZIP</a></div><p class="small">Local format checks passed · portal acceptance untested<br><a href="{nan}" download>NaN-outside alternative</a> · <a href="downloads/submission-audit.json">Local format/provenance receipt</a></p>'''
+
+    # Display v3 MINE without labelling it as conditional information or truth.
+    mine_rows = []
+    for name, row in mine["features"].items():
+        mine_rows.append(
+            f"<tr><td>{esc(name)}</td><td>{row['full_fit_mean_nats']:.7g}</td>"
+            f"<td>{row['oof_weighted_mean_nats']:.7g}</td><td>{row['null_mean_nats']:.7g}</td>"
+            f"<td>{esc(row['screen'])}</td></tr>"
         )
-        pooled_old = v.get("pooled", {})
-        decision_title = "A positive delta is not enough."
-        decision_body = f"""<p>The measured-data candidate scored <strong>{pooled_old.get('candidate_dti',0):.5f}</strong> against a fresh baseline of <strong>{pooled_old.get('baseline_dti',0):.5f}</strong> on spatially withheld <em>known catalogue</em> labels. Only {pooled_old.get('positive_folds',0)}/4 folds improved. The uncertainty interval crosses zero, so promotion failed.</p>"""
-        gate_notice = """<div class="notice"><strong>Do not spend a weekly slot on this file yet.</strong><br>95% paired spatial-bootstrap ΔDTI crosses zero. Proxy scores are not comparable to hidden-fault leaderboard.</div>"""
-        badge = "RESEARCH ONLY · GATE CLOSED"
-        stats_pixels = 41339
+    mine_table = "".join(mine_rows)
 
-    home = f"""<div class="hero"><div><span class="eyebrow">DOE GEMS Prize · fault-discovery lab</span><h1>A new fault map.<br>An honest test.</h1><p class="lead">A unique GeoTIFF built from measured geophysics—not copied predictions. Download the candidate, inspect its evidence, and protect the next submission slot.</p><span class="badge">{badge}</span>{download}<p class="small">Validated on spatial holdout · No leaderboard score yet · Unique vs {u["compared_same_grid"]} prior rasters</p></div><div class="map"><div class="map-head"><span>GeoDAWN / Nevada–California</span><span>100m grid</span></div><figure><img src="assets/prediction-overview.png" alt="Actual candidate predictions in gold over the measured total magnetic intensity field; these are not confirmed faults." width="659" height="746"><figcaption><span class="dot"></span>Candidate dots over measured TMI<br>Downsampled display; not confirmed faults or geothermal vents.</figcaption></figure></div></div>
-    <div class="stats"><div class="stat"><strong>{stats_pixels}</strong><span>{'validated' if v_is_v2 else 'new-model'} prediction cells</span></div><div class="stat"><strong>5.17M</strong><span>catalogue-footprint MI evaluation rows</span></div><div class="stat"><strong>{u["compared_same_grid"]}</strong><span>prior rasters compared · no duplicates</span></div><div class="stat"><strong>9</strong><span>hypotheses with full-label MINE</span></div></div>
-    <section><span class="eyebrow">01 / Decision</span><h2>{decision_title}</h2>{decision_body}{gate_notice}<div class="table-scroll"><table><thead><tr><th>Spatial fold</th><th>19-band baseline</th><th>19 + D_topographic_step_proxy</th><th>ΔDTI</th></tr></thead><tbody>{foldrows}</tbody></table></div><p class="small">Four quadrants · 1km training buffer · fixed sparse budget · 180+ spatial blocks · <a href="evidence/validation-v2.json">Full validation receipt (v2)</a> · <a href="evidence/validation-results.json">Previous A validation</a></p></section>
-    <section><span class="eyebrow">02 / Scientific direction</span><h2>Test the physics. Preserve the uncertainty.</h2><div class="cards"><article class="card"><span class="num">HYPOTHESIS D · VALIDATED</span><h3>Topographic step × magnetic edge</h3><p>Gradient magnitude divided by absolute Laplacian (step vs curvature) times magnetic edge strength. Highest stable MINE OOF (0.000125 nats) and +0.00807 DTI on 4/4 folds, CI>0.</p></article><article class="card"><span class="num">NINE FEATURES · FULL LABEL SET</span><h3>Information before tuning</h3><p>Neural MINE with three seeds, spatial folds and null controls. F_transtensional_corridor highest full-fit MI but negative OOF; D and I most stable. Filter before spending slots.</p></article><article class="card"><span class="num">H33 · USER-REPORTED 0.2778</span><h3>Why thinning wins, and how to beat it</h3><p>Sparse coverage avoids paying FP mass for already-covered truth. H33 pruned 200m near catalogue (37,654 dots). New candidate uses 0.7% density, 3.0px separation, tip protection, and a validated topographic step feature — 71,947 pixels different vs H33.</p></article></div><p><a href="methodology.html">Read the scientific review and nine ranked hypotheses →</a></p></section>
-    <section><span class="eyebrow">03 / Artifact identity</span><h2>One file. A traceable record.</h2><p><code>{esc(m["name"])}</code></p>{note}<p class="hash">SHA-256 · {m["files"][0]["sha256"]}<br>Pixels SHA-256 · {m["canonical_pixels_sha256"][:12]}… · {m["geometry"]["positive_pixels"]} positive cells</p><p><a href="executive_summary.html">Submission instructions and format conventions →</a></p></section>
-    <section><span class="eyebrow">04 / Research integrity</span><h2>The inherited synthetic result was withdrawn.</h2><p>The previous generator used random fault lines and simulated “MT/ASTER” fields. Its holdout forced positive improvements. We replaced it with measured data, actual MINE screening on 5.17M rows, spatial validation, and a closed promotion gate. <a href="evidence/withdrawn-artifacts.json">Withdrawal record</a>.</p><p class="small">Official leaderboard last observed: <strong>{feed["leaderboard_best"]:.4f}</strong> · {esc(feed["last_success_utc"])}. Refresh status: {esc(feed["status"])}. <a href="sources.html">Source freshness and limitations</a>.</p></section>"""
-    (docs / "index.html").write_text(layout("Measured-data research", home))
+    fold_rows = []
+    for fold in validation["folds"]:
+        models = fold["models"]
+        delta = models["plus_D_J"]["dti"] - models["plus_D"]["dti"]
+        fold_rows.append(
+            f"<tr><td>Quadrant {fold['fold'] + 1}</td>"
+            f"<td>{models['baseline_19']['dti']:.5f}</td>"
+            f"<td>{models['plus_D']['dti']:.5f}</td>"
+            f"<td>{models['plus_D_J']['dti']:.5f}</td>"
+            f"<td>{delta:+.5f}</td></tr>"
+        )
+    delta_j = validation["comparisons"]["plus_D_J_vs_plus_D"]
+    gate_reasons = "".join(f"<li>{esc(reason)}</li>" for reason in gate["reasons_closed"])
 
-    # Executive summary with new status
-    if v_is_v2:
-        exec_status = f"""<div class="notice"><strong>Current status: VALIDATED on catalogue-proxy holdout (4/4 folds, CI excludes zero).</strong> No leaderboard score yet. Download is safe; this file has passed the internal gate that A failed, but hidden-fault performance remains unmeasured.</div>"""
-        exec_gate = f"""<li>Validated comparison: plus_D beats fresh baseline in 4/4 folds, ΔDTI {v2['pooled']['plus_D']['delta_vs_baseline']:+.5f}, 95% CI [{v2['pooled']['plus_D']['paired_bootstrap_95'][0]:+.5f}, {v2['pooled']['plus_D']['paired_bootstrap_95'][1]:+.5f}]. This passes the strict gate.</li>"""
-    else:
-        exec_status = """<div class="notice"><strong>Current status: research-only, not approved.</strong> The candidate failed the uncertainty gate. Downloading it is safe; uploading it would consume a limited slot without the requested evidence.</div>"""
-        exec_gate = """<li>Confirm a valid comparison with the current holdout best has passed and record the final artifact hash. <strong>This candidate has not passed.</strong></li>"""
+    badge = "RESEARCH ONLY · SLOT GATE CLOSED"
+    hero = f"""<div class="hero"><div><span class="eyebrow">DOE GEMS Prize · measured-data research</span><h1>A unique map.<br>An honest gate.</h1><p class="lead">A distinct GeoTIFF derived from measured geophysics. It passes local file checks; no hidden-fault score or comparable current-best holdout is available.</p><span class="badge">{badge}</span>{download}<p class="small">Do not submit this file from the current evidence. Leaderboard snapshot: {feed['leaderboard_best']:.4f} on {esc(feed['last_success_utc'])}; no score is claimed for this candidate.</p></div><div class="map"><div class="map-head"><span>GeoDAWN / Nevada–California</span><span>100m grid</span></div><figure><img src="assets/prediction-overview.png" alt="Candidate research pixels in gold over measured total magnetic intensity; pixels are not confirmed faults." width="659" height="746"><figcaption><span class="dot"></span>Candidate pixels over measured TMI<br>Downsampled display; not confirmed faults or geothermal vents.</figcaption></figure></div></div>
+    <div class="stats"><div class="stat"><strong>{manifest['geometry']['positive_pixels']:,}</strong><span>candidate cells · research only</span></div><div class="stat"><strong>{mine['population']:,}</strong><span>all-pixel MINE evaluation population</span></div><div class="stat"><strong>{uniqueness['compared_same_grid']}</strong><span>prior same-grid public rasters checked</span></div><div class="stat"><strong>3</strong><span>v3 feature arrays MINE-screened</span></div></div>
+    <section><span class="eyebrow">01 / Decision</span><h2>Why the weekly slot remains protected</h2><div class="notice"><strong>Gate: CLOSED.</strong> The unique raster has local disk-reread format checks only. Neither portal acceptance nor an artifact-level win over a reproducible current-best holdout has been demonstrated.</div><ul>{gate_reasons}</ul><p><a href="evidence/slot-gate.json">Full gate requirements and evidence</a></p></section>
+    <section><span class="eyebrow">02 / Preregistered test</span><h2>J did not add a reliable gain over D</h2><p>The primary asymmetric magnetic-flank hypothesis was selected before feature computation. In four spatial catalogue-proxy folds, 19+D+J vs 19+D was <strong>{delta_j['delta_dti']:+.6f} DTI</strong>, {delta_j['positive_folds']}/4 folds positive; paired 20km-block 95% interval [{delta_j['paired_block_bootstrap_95'][0]:+.6f}, {delta_j['paired_block_bootstrap_95'][1]:+.6f}]. This fails the preregistered incremental gate. The proxy uses incomplete public labels, where zero is unlabelled.</p><div class="table-scroll"><table><thead><tr><th>Spatial fold</th><th>19-band baseline</th><th>19 + D</th><th>19 + D + J</th><th>J increment vs D</th></tr></thead><tbody>{''.join(fold_rows)}</tbody></table></div><p class="small">Four geographic quadrants · 1km training exclusion · fixed HGB settings · equal 0.8% budget · 2.8-cell spacing · 180 paired 20km blocks · <a href="evidence/validation-v3.json">full v3 receipt</a>. A positive total D+J vs baseline does not prove J adds information beyond D.</p></section>
+    <section><span class="eyebrow">03 / Information screen</span><h2>Full-label MINE is a filter, not an approval</h2><p>DV-MINE estimates marginal association with the public known-fault catalogue, not conditional gain over the 19 bands, hidden truth, or leaderboard score. Full-fit estimates can be optimistic; spatial OOF and global shuffled-label nulls are diagnostics.</p><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Full-fit mean (nats)</th><th>Spatial OOF mean (nats)</th><th>Null mean (nats)</th><th>Screen</th></tr></thead><tbody>{mine_table}</tbody></table></div><p><a href="evidence/mine-results-v3.json">All seeds, folds and estimator limitations</a> · <a href="evidence/hypotheses-v3-preregistered.md">Pre-feature hypotheses and formulas</a> · <a href="evidence/hypotheses-v3-review-amendment.md">L implementation review amendment</a></p></section>
+    <section><span class="eyebrow">04 / Artifact identity</span><h2>Unique raster, clear scope</h2><p><code>{esc(manifest['name'])}</code></p>{note_box(note)}<p class="hash">File SHA-256 · {primary_receipt['sha256']}<br>Canonical pixel SHA-256 · {manifest['canonical_pixels_sha256']}<br>{primary_receipt['positive_pixels']:,} binary positive cells · values [0,1]</p><p>No duplicate among {uniqueness['compared_same_grid']} retrievable same-grid blobs in 36 pinned sibling repositories; scope is not exhaustive beyond observed public artifacts.</p><p><a href="executive_summary.html">Executive guide: local format vs. submission readiness →</a></p></section>
+    <section><span class="eyebrow">05 / Research integrity</span><h2>Unknowns stay visible</h2><p>The reported H33 score-to-file mapping is user-reported and has no organizer-exposed raster hash. Its sibling holdout recipe is not reproducible from the tracked tree, and its mirror receipt reproduced only 2/6 logged orderings (3/6 after calibration). No new candidate is claimed to beat it. The historical v2 D proxy result remains in the audit record but does not validate this final emitted raster.</p><p><a href="methodology.html">Read the complete scientific review, limitations and next steps →</a></p><p class="small">Leaderboard observation: <strong>{feed['leaderboard_best']:.4f}</strong> · {esc(feed['last_success_utc'])} · {esc(feed['status'])}. <a href="sources.html">Source register and freshness</a>.</p></section>"""
+    (docs / "index.html").write_text(layout("Measured-data research", hero))
 
-    executive = f"""<span class="eyebrow">Executive summary / submission guide</span><h1>Download first.<br>Submit only after the gate.</h1>{exec_status}{download}<p>Filename: <code>{Path(primary).name}</code></p>{note}<h2>How to submit an approved candidate</h2><ol>{exec_gate}<li>Read the <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">official rules</a>, confirm your own eligibility, register/sign in to <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">DrivenData GEMS</a>, and accept the terms. Never share credentials with this site.</li><li>Download the <strong>.tif</strong> above (or the ZIP containing exactly one TIF). Do not upload this web page, an audit JSON, or a screenshot.</li><li>On DrivenData select <strong>New submission → File to submit → Choose file</strong>, choose the downloaded TIF, and paste the short note.</li><li>Only after approval, submit and record the organizer score, returned submission identifier, timestamp and the file hash together. Do not present an estimate as an organizer score.</li><li>Before the deadline, choose one final submission across both rounds. The rules specify three submissions per week. Finalist delivery also requires reproducible code/resources and a generative-AI-use narrative.</li></ol><h2>Why this file avoids range failures</h2><p>The primary was reopened from disk: all 12,279,160 cells are finite, min 0, max 1, one float32 band, correct CRS/shape/transform, no nodata sentinel. Predictions outside the actual template footprint are zero. The exact cause of the earlier portal error cannot be diagnosed without that rejected file.</p><p><strong>Outside-footprint convention:</strong> official prose specifies null/NaN outside. The alternate download follows the template's NaN mask exactly. The zero-filled primary follows the user's reportedly accepted H33 convention and avoids NaN range-check ambiguity. Neither local validation nor historical claims certify this file's portal acceptance, but this file passes both zero and NaN local contracts.</p><p>Primary: {m["files"][0]["positive_pixels"]} positive cells, min {m["files"][0]["min"]}, max {m["files"][0]["max"]}, finite {m["files"][0]["finite_pixels"]}, SHA-256 {m["files"][0]["sha256"][:16]}…</p><h2>Rebuild rather than copy</h2><p>The static website serves an already generated, audited candidate. It does not train in your browser. The complete CPU workflow can be run without manual data placement using checksum-pinned inputs.</p><p><a class="button secondary" href="https://github.com/buffedlizard55-lab/GEMSDOE38/actions/workflows/research.yml">Open reproducible generation workflow ↗</a></p><p class="small">GitHub Actions permissions are needed to run it. Workflow outputs are research artifacts only; there is no DrivenData auto-upload.</p><h2>Limits and next session</h2><p>No hidden new-fault labels, private score, competition login or field confirmation is available. CPU training and data recovery worked. Next: test D+I interaction on fresh nested splits, 1m LiDAR on selected blocks, flight-line artifact controls. <a href="methodology.html">Full plan and disclosures →</a></p>"""
+    executive = f"""<span class="eyebrow">Executive summary / submission guide</span><h1>Download for review.<br>Do not submit yet.</h1><div class="notice"><strong>Current status: research-only. Competition slot gate is CLOSED.</strong> The local format contract passes; portal acceptance, hidden-fault performance, and a comparable current-best holdout win are untested/unavailable.</div>{download}<p>Artifact: <code>{Path(primary).name}</code></p>{note_box(note)}<h2>Before any competition upload</h2><ol><li><strong>Do not use this artifact as a competition submission yet.</strong> First resolve the current-best holdout and pass the gate in <a href="evidence/slot-gate.json">the decision record</a>.</li><li>After the gate is open, review the <a href="https://docs.nlr.gov/docs/fy26osti/96647.pdf">official rules</a>, independently confirm eligibility, and sign in to <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/">DrivenData GEMS</a>. Never share credentials with this site.</li><li>For an approved artifact only, download the <strong>.tif</strong> above (or its ZIP, which contains exactly one TIF). Do not upload this page, a JSON receipt, or a screenshot.</li><li>On DrivenData use <strong>New submission → File to submit → Choose file</strong>, then paste the approved artifact's short distinction note.</li><li>Record the organizer-returned submission ID, score, timestamp and exact file hash together. Do not present a local metric as an organizer score.</li><li>Preserve the final-round choice; rules specify three submissions per week and a single final selection across both rounds.</li></ol><h2>Local file checks (not portal certification)</h2><ul><li>Primary: single-band float32, EPSG:32611, shape 3730 × 3292, correct transform, all 12,279,160 cells finite, min {primary_receipt['min']}, max {primary_receipt['max']}, 36,171 positive cells, outside-footprint zero, no nodata tag.</li><li>NaN alternative: same canonical pixels inside footprint; NaN outside with NaN nodata. The competition prose specifies null/NaN outside; neither local encoding has been portal-tested.</li><li>SHA-256: <code>{primary_receipt['sha256']}</code>.</li></ul><p>The exact cause of the earlier portal range error cannot be diagnosed without the rejected raster/log. This file passes local range checks only; do not infer portal acceptance.</p><h2>What would reopen the gate?</h2><p>Recreate/hash the current-best holdout inputs and code; compare the current-best and candidate on identical frozen spatial test cells; show a robust incremental win without post-hoc tuning; and separately verify portal acceptance. Hidden expert labels remain unavailable here.</p><h2>Rebuild the research artifact</h2><p>The static website serves an existing audited file and does not train in the browser. See the <a href="https://github.com/buffedlizard55-lab/GEMSDOE38/actions/workflows/research.yml">research workflow</a> and local reproducibility commands in the README. There is no automatic DrivenData upload.</p><p class="small">AI-use disclosure and official rule interpretation are in the <a href="methodology.html">scientific review</a>. Account-holder eligibility and external-content rights must be verified by the account holder.</p>"""
     (docs / "executive_summary.html").write_text(layout("Executive submission guide", executive, True))
 
-    mir = "".join(
-        f"<tr><td>{esc(k)}</td><td>{r['full_fit_mean_nats']:.7f}</td><td>{r['oof_weighted_mean_nats']:.7f}</td><td>{r['null_mean_nats']:.7f}</td><td>{esc(r['screen'])}</td></tr>"
-        for k, r in mi["features"].items()
+    review = markdown.markdown(
+        (ROOT / "knowledge/research-review.md").read_text(),
+        extensions=["tables", "fenced_code", "sane_lists"],
     )
-    review = markdown.markdown((ROOT / "knowledge/research-review.md").read_text(), extensions=["tables", "fenced_code"])
-    for name in ["hypotheses-preregistered.md", "mine-results.json"]:
-        review = review.replace(f'href="{name}"', f'href="evidence/{name}"')
-    # New hypotheses file if exists
-    hyp_files = list((ROOT / "knowledge").glob("hypotheses*.md"))
-    hyp_text = ""
-    for hf in sorted(hyp_files):
-        md = markdown.markdown(hf.read_text(), extensions=["tables", "fenced_code"])
-        hyp_text += f"<hr><h2>{esc(hf.name)}</h2>{md}"
-    method = f"""<span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results and interpretations are separated. Negative results remain visible.</p><h2>Full-catalogue MINE estimates — 9 features</h2><p>Natural-log units (nats), three seeds. OOF means weighted by spatial-fold population. Null labels globally permuted. These values describe catalogue labels, not hidden new-fault truth. D_topographic_step_proxy has highest stable OOF; F_transtensional_corridor highest full-fit but negative OOF (spatial overfit).</p><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Full-fit mean</th><th>Spatial OOF mean</th><th>Shuffled null</th><th>Screen</th></tr></thead><tbody>{mir}</tbody></table></div><p><a href="evidence/mine-results.json">All seeds, folds, units and limitations</a> · <a href="evidence/validation-v2.json">Validation v2 (9 configs)</a></p><h2>Why H33-2-B2 reached 0.2778 and how to beat it</h2><p><strong>DTI is a budget:</strong> D = T / (0.2(T+FP) + 0.8|G|). Each emitted pixel must earn &gt;0.2·DTI coverage to improve score. Thinning a thick surface (H19-5 121k → 44k → 37k) removes redundant mass while retaining geometric credit. H33 also prunes within 200m of known catalogue (pixel-exact mask is official; near-catalogue predictions are penalized unless near new truth). That saves FP mass but can delete true corrections (staff says new truth can be within 300m of known faults).</p><p><strong>New candidate improvements:</strong></p><ul><li>Validated feature D_topographic_step_proxy: step morphology (grad/|Laplacian|) × magnetic edge. MINE full-fit 0.000148 nats, OOF 0.000125 nats (vs null -3e-07). Spatial holdout: +0.00807 DTI, 4/4 folds, 95% CI [0.00109, 0.01549] excludes zero — first feature to pass strict gate.</li><li>Improved emission: 0.7% density (36,171 px vs 41,339 previously, 37,654 H33) and 3.0px separation (vs 2.8) reduces kernel overlap (ρ from 1.429→1.179 in H28 analysis) and raises credit per pixel.</li><li>Tip protection: retain predictions within 3px of fault endpoints (splays, tip extensions) even if within 200m of catalogue, to preserve potential corrections that H33's blind 200m prune would delete.</li><li>Unique content: 71,947 pixels different vs H33 reference, 0 duplicates vs 208 same-grid prior rasters.</li></ul><p><strong>Can we exceed 0.2778 / 0.3262?</strong> Possible in principle; not demonstrated. Leaderboard 0.3262 needs ~25% more mean credit per pixel than 0.26 at same mass. Our catalogue-proxy gain (+6%) is not a hidden-fault guarantee. Next: test D+I interaction on fresh nested splits, flight-line controls, 1m LiDAR blocks.</p>{review}{hyp_text}"""
+    hypotheses = markdown.markdown(
+        (ROOT / "knowledge/hypotheses-v3-preregistered.md").read_text(),
+        extensions=["tables", "fenced_code", "sane_lists"],
+    )
+    for filename in [
+        "hypotheses-v3-preregistered.md",
+        "hypotheses-v3-review-amendment.md",
+        "hypotheses-preregistered.md",
+        "mine-results.json",
+        "mine-results-v3.json",
+        "validation-v3.json",
+        "slot-gate.json",
+    ]:
+        review = review.replace(f'href="{filename}"', f'href="evidence/{filename}"')
+        hypotheses = hypotheses.replace(f'href="{filename}"', f'href="evidence/{filename}"')
+    method = f"""<span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results, proxy evaluations and interpretations are separated. Failed gates and uncertainty remain visible.</p><h2>Current decision</h2><p><strong>SLOT GATE CLOSED. Do not submit the current artifact. No current-best compatible reproducible holdout is available, and no claim to beat H33 or the leaderboard is made.</strong> The v3 J incremental comparison fails against D on the public catalogue proxy. See the <a href="evidence/slot-gate.json">gate record</a>.</p><h2>v3 preregistration</h2>{hypotheses}<h2>Complete review, historical context and next steps</h2>{review}<p><a href="evidence/mine-results.json">Historical v2 MINE receipt (nine features)</a> · <a href="evidence/validation-v2.json">Historical v2 proxy receipt</a> · <a href="evidence/submission-manifest.json">Research-artifact manifest</a></p>"""
     (docs / "methodology.html").write_text(layout("Scientific review and results", method, True))
 
-    rows = "".join(
-        f'<tr><td><a href="{esc(r["url"])}">{esc(r["id"])}</a><br><small>{esc(r["authority"])}</small></td><td>{esc(r["verified"])}</td><td>{esc(r["status"])}</td></tr>'
-        for r in sources["sources"]
+    source_rows = "".join(
+        f"<tr><td><a href=\"{esc(source['url'])}\">{esc(source['id'])}</a><br><small>{esc(source['authority'])}</small></td><td>{esc(source['verified'])}</td><td>{esc(source['status'])}</td></tr>"
+        for source in sources["sources"]
     )
-    sourcepage = f"""<span class="eyebrow">Sources / provenance / freshness</span><h1>Every claim has a scope.</h1><p>Official sources define the task. Owner mirrors supply data with integrity checks, not independent organizer authentication. Previous submissions are learning/comparison artifacts only.</p><div class="notice"><strong>Leaderboard snapshot: {feed["leaderboard_best"]:.4f}</strong><br>Last successful observation: {esc(feed["last_success_utc"])}<br>Last attempt: {esc(feed["last_attempt_utc"])}<br>Status: {esc(feed["status"])}</div><p>Daily Pages builds attempt an automatic leaderboard refresh. Failures preserve the last known value and visibly mark it stale.</p><div class="table-scroll"><table><thead><tr><th>Official link</th><th>What was checked</th><th>Evidence scope</th></tr></thead><tbody>{rows}</tbody></table></div><h2>Audit downloads</h2><ul><li><a href="evidence/source-register.json">Source register</a></li><li><a href="evidence/input-inventory.json">Actual raster inventory</a></li><li><a href="evidence/upstream-data-manifest.json">Pinned data manifest</a></li><li><a href="evidence/site-review.json">36 prior entry pages</a></li><li><a href="evidence/uniqueness-audit.json">254 paths / 208 same-grid comparisons</a></li><li><a href="evidence/validation-v2.json">Spatial validation v2 (9 configs, D validated)</a></li><li><a href="evidence/validation-results.json">Previous A validation</a></li><li><a href="evidence/mine-results.json">MINE 9 features, 3 seeds, 12 OOF folds</a></li><li><a href="evidence/feed.json">Feed freshness</a></li></ul><h2>AI and licence disclosure</h2><p>Arena.ai assistant for source review, coding, tests, documentation. Raster computed from measured geophysics, not imagined geology. Synthetic downloads withdrawn. External licences and eligibility require account-holder confirmation.</p>"""
+    sourcepage = f"""<span class="eyebrow">Sources / provenance / freshness</span><h1>Every claim has a scope.</h1><p>Official sources define the competition and geological context. Owner mirrors provide hash-checked inputs but not independent organizer authentication. Prior sites and score mappings are research context only.</p><div class="notice"><strong>Public leaderboard snapshot: {feed['leaderboard_best']:.4f}</strong><br>Last successful observation: {esc(feed['last_success_utc'])}<br>Last attempt: {esc(feed['last_attempt_utc'])}<br>Status: {esc(feed['status'])}</div><p>Refresh snapshots may fail or be stale. A public participant score is not linked to a file hash unless the organizer supplies one.</p><div class="table-scroll"><table><thead><tr><th>Review link</th><th>What was checked</th><th>Scope / result</th></tr></thead><tbody>{source_rows}</tbody></table></div><h2>Audit downloads</h2><ul><li><a href="evidence/source-register.json">Source register</a></li><li><a href="evidence/input-inventory.json">Raster inventory and hashes</a></li><li><a href="evidence/upstream-data-manifest.json">Pinned owner-mirror manifest</a></li><li><a href="evidence/site-review.json">36 prior entry-page snapshots</a></li><li><a href="evidence/uniqueness-audit.json">Public-artifact uniqueness audit</a></li><li><a href="evidence/hypotheses-v3-features.json">Feature hashes and diagnostics</a></li><li><a href="evidence/mine-results-v3.json">Full-label MINE v3</a></li><li><a href="evidence/validation-v3.json">Spatial validation v3</a></li><li><a href="evidence/slot-gate.json">Submission gate</a></li><li><a href="downloads/submission-audit.json">GeoTIFF local format receipt</a></li><li><a href="evidence/feed.json">Leaderboard snapshot receipt</a></li></ul><h2>AI and licence disclosure</h2><p>An Arena.ai assistant supported source review, coding, tests and documentation. The raster was computed by the measured-data pipeline, not generated as an imagined geological image. Synthetic inherited artifacts were withdrawn. The account holder must confirm eligibility and rights for any additional source data.</p>"""
     (docs / "sources.html").write_text(layout("Verified sources and provenance", sourcepage, True))
-    print("Built four pages from measured evidence (v2)")
+    print("Built four pages with gate-closed, catalogue-proxy-only status")
+
+
+if __name__ == "__main__":
+    main()

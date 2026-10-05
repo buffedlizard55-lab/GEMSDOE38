@@ -1,76 +1,99 @@
-# GEMSDOE38 — measured-data fault discovery
+# GEMSDOE38 — measured-data fault-discovery research
 
-## Download the new GeoTIFF (validated, unique)
+## Current status — 2026-10-05
 
-**[Download the unique all-finite TIF](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.tif)** · [ZIP](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.zip) · [NaN-outside twin](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-nan.tif) · [format/provenance receipt](docs/downloads/submission-audit.json)
+> **Slot gate: CLOSED. The GeoTIFF below is a unique, locally format-checked research artifact, not an approved competition submission.** Its portal acceptance is untested; hidden-fault performance is unknown; and it has not beaten a reproducible current-best holdout. Do not spend a weekly slot on it.
 
-**VALIDATED on spatial holdout: 4/4 folds positive, 95% CI excludes zero.** No leaderboard score yet — hidden-fault truth unavailable — but this candidate passes the strict gate that hypothesis A failed.
+### Download the unique research GeoTIFF
 
-- Name: `gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48`
-- Note: `G38 D-topo-step 19+D HGB120 0.7pct s3.0 tipProt 200mExcl; OOF+0.00807 4/4 CI>0; MINE D 0.000148 nats`
-- 1 band, float32, EPSG:32611, 3730 rows × 3292 columns, 100m; **36,171** positive cells (0.7% density, 3.0px separation, tip-protected).
-- Primary has only finite values in `[0,1]`, zero outside footprint, no nodata tag; NaN twin follows official prose (null/NaN outside). Both pass local contracts: single band, float32, EPSG:32611, correct shape/transform, min 0 max 1, finite inside, no -3.4e38 sentinel.
-- File SHA-256: `8e0876bbe844ee118489993bc3fe67c3120181ffef9a0dc144c083fbb5a1f5cd`.
-- Pixel-content SHA-256: `ecfbf59e2b48…`; **71,947 changed pixels vs H33 reference** (H33 is 37,654 px, 200m prune). Compared with **208** same-grid prior raster blobs across **254** public artifact paths in 36 supplied repositories: **no duplicates**. See [audit scope](knowledge/uniqueness-audit.json).
-- Second candidate (D+I, 0.65% density, 36k px) also generated: `gems38-DI-step-3p0-065pct-tipProt-20261005-*`, 69,515 px different vs H33, 45,846 vs primary.
+**[Download all-finite GeoTIFF](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.tif)** · [ZIP containing that one TIF](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.zip) · [NaN-outside alternative](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-nan.tif) · [local format/provenance receipt](docs/downloads/submission-audit.json)
 
-**[Project website](https://buffedlizard55-lab.github.io/GEMSDOE38/)** · [Executive submission guide](docs/executive_summary.html) · [Scientific review](knowledge/research-review.md) · [New hypotheses v2](knowledge/hypotheses-v2-preregistered.md) · [MINE 9 features](knowledge/mine-results.json) · [Validation v2](knowledge/validation-v2.json)
+- **Distinct name:** `gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48`
+- **Short distinction note:** `G38 D-step 19+D HGB120; 0.7%, 3.0px, tip-protected; local format-check only`
+- 1 band, float32, EPSG:32611, 3730 × 3292 cells, 100m transform. The all-finite file has 36,171 binary positive cells; every pixel is in `[0,1]`, outside-footprint cells are zero, and no nodata tag is set.
+- Local disk-reread checks passed for dtype, shape, CRS, transform, inside-footprint finiteness/range, outside policy and nodata convention. The NaN-outside twin has the same canonical in-footprint pixels. **Neither encoding is portal-certified.**
+- All-finite file SHA-256: `8e0876bbe844ee118489993bc3fe67c3120181ffef9a0dc144c083fbb5a1f5cd`; canonical pixel hash: `ecfbf59e2b487400bd6a180ab745f1914619cff88afda3a2bbcdc54f4336e0d2`.
+- No content duplicate was found among the 208 retrievable same-grid raster blobs across 36 pinned sibling repositories. This is a scoped public-artifact comparison, not a claim about private or unobserved submissions.
+- This is the existing v2 raster, retained for traceability. No new raster was generated in v3 because the primary candidate failed its incremental proxy gate and no reproducible current-best holdout is available.
 
-## What changed / evidence (v2)
+**[Project website](https://buffedlizard55-lab.github.io/GEMSDOE38/)** · [Executive submission guide](docs/executive_summary.html) · [Scientific review](knowledge/research-review.md) · [v3 preregistered hypotheses](knowledge/hypotheses-v3-preregistered.md) · [v3 MINE results](knowledge/mine-results-v3.json) · [v3 validation](knowledge/validation-v3.json) · [slot gate](knowledge/slot-gate.json)
 
-The inherited “MT/ASTER” generator used random faults and simulated fields. Its holdout forced positive deltas and its MINE results were synthetic demonstrations. These downloads are withdrawn, with hashes preserved in [the withdrawal record](knowledge/withdrawn-artifacts.json); original history is retained in Git.
+## Decision record: evidence, not optimism
 
-The replacement recovered real 19-band data via a checksum-pinned owner mirror, built **nine** label-free feature hypotheses (A–D original, E–I new), ran neural MINE on the complete catalogue population (5,167,373 rows, 60,988 positives, H(Y)=0.064129 nats, 3 seeds, 12 spatial OOF folds, shuffled nulls), trained CPU models, measured spatially blocked results, and generated genuinely new rasters from measured features—not copied predictions.
+### Current-best evidence is not reproducible yet
 
-|Evidence|Result|
-|---|---|
-|Official public leaderboard, checked 2026-10-05|**0.3262** leading, not 0.3195. H33's 0.2778 file attribution remains user-reported, extradr19 at 0.2778.|
-|Full-label MINE v2 (9 features)|Population 5,167,373; positives 60,988; H(Y)=0.06412918 nats. Full-fit mean: F 0.00028387 (highest), D 0.00014835, I 0.00012835, E 6.86e-05, G 7.03e-05, H 4.54e-05, A 1.70e-05, C 1.66e-05, B 1.20e-06. OOF mean: D 0.00012556 (stable), I 0.00011102, H 3.54e-05, E 2.81e-05, G 1.17e-05, A 4.25e-06, C 9.09e-06, B -2.16e-05, F -7.31e-05 (overfit). Null ~ -4e-07.|
-|Spatial benchmark v2 (0.8% density, 2.8px)|Baseline 0.13144859; plus_D **0.13952240** Δ+0.00807381 4/4 folds positive, 95% CI [0.00109,0.01549] excludes zero — **PASS**. plus_I 0.13387 Δ+0.00242 3/4 CI crosses zero. plus_F 0.13491 Δ+0.00346 4/4 CI crosses zero. plus_E -0.00040 1/4. plus_D_I 0.13864 Δ+0.00719 3/4 CI [-0.00074,0.01503].|
-|New submission|19+D, HGB120, 0.7% density (36,171 px), 3.0px separation, 200m catalogue exclusion with tip protection (retain within 3px of fault endpoints). No prior prediction as input. 71,947 px different vs H33. 0 duplicates vs 208 prior same-grid rasters.|
-|Why H33 works and how to beat it|DTI = T / (0.2T+0.2F+0.8G); improvement when (1-0.2D)ΔT > 0.2DΔF. At D=0.2778, 1 FP needs 0.05883 coverage. Thinning removes redundant mass; flank prune saves FP but can delete true corrections (staff says new truth can be within 300m of known faults). New: validated D feature (step × mag edge) + 3.0px separation (reduces kernel overlap ρ 1.429→1.179) + tip protection preserves splay corrections + lower density raises mean credit.|
+The user-reported mapping of GEMSDOE32 `h33-h33-2-b2-20261004T220000Z-e5eb6e7e-zeros` to **0.2778** is not tied to an organizer-published raster hash. The public leaderboard snapshot on 2026-10-05 showed a best score of **0.3262**; it identifies a participant score, not the underlying artifact filename.
 
-Why the prior sparse H33 may work: DTI rewards maximum coverage of true faults while charging excess false-positive mass. Thinning and catalogue-flank pruning can reduce redundant mass. Exact attribution cannot be proven without hidden truth. The official known-fault mask is pixel-exact; 200m pruning is only a heuristic. See the [derivation, sources and limitations](knowledge/research-review.md).
+At pinned GEMSDOE32 commit `b63ebab7dbcf9238422ebbc2dbc4addf84bed11b`, the holdout implementation uses a 15-pixel collar and 12-pixel domain erosion, while its `h33_holdout.json` describes 30 and 20 pixels. The required `data/external/derived_sgmc_faults_100m_u8.tif` is absent from that tracked tree. Its own live-mirror receipt reproduced just **2/6** historical score orderings (3/6 after the receipt's calibration). These are useful owner-reported proxy results, not a reproducible hidden-label benchmark. No candidate is claimed to have beaten H33 or the current leaderboard best.
 
-MINE does not guarantee lower variance, does not measure incremental information conditional on existing features, and cannot rule out interactions from near-zero marginal estimates. Full-label screen must not leak feature selection into allegedly untouched holdout. D was preregistered in v1 before v2 MINE results; v2 validation used fresh nested design without tuning to results.
+### Historical v2 result — limited scope
 
-## Reproduce without manual data placement
+The earlier D-feature experiment reported `19+D` versus a fresh 19-band baseline at catalogue-proxy DTI **0.139522 vs 0.131449** (Δ **+0.008074**; 4/4 quadrants; conditional paired 20km-block 95% interval **[+0.001093, +0.015498]**). This is a positive internal result against the incomplete public catalogue, whose zero pixels are unlabelled. It is **not** an evaluation against the reported H33 holdout best, and it did not validate the final raster's separate 0.7% emission, 3.0px thinning, 200m exclusion and endpoint protection. It does not open the submission gate.
 
-Python 3.11+, `gh` connected to GitHub, roughly 3GB RAM / 2GB working disk. CPU suffices. Dependencies tested are pinned in `requirements-lock.txt`; supported ranges are in `requirements.txt`.
+### v3 preregistration, full-label MINE and locked spatial comparison
+
+Three local feature hypotheses (J/K/L) and one blocked external-data hypothesis (X) were documented before building v3 features. J was selected as the primary on physical rationale before MINE results. The full-footprint MINE screen evaluated all **5,167,373** public-label cells (60,988 positives; entropy 0.064129 nats), with three seeds, four spatial OOF folds and shuffled-label controls. MINE estimates marginal association with the public catalogue; they are not incremental conditional information, hidden-fault truth or guarantees of model value. Upstream feature quantile scaling uses the full footprint without labels, so folds have label-free transductive preprocessing rather than a completely fold-local pipeline.
+
+|Feature|Full-fit MINE mean (nats)|Spatial OOF mean (nats)|Shuffled-null mean (nats)|Interpretation|
+|---|---:|---:|---:|---|
+|J — asymmetric magnetic flank|4.661e-05|1.950e-05|-2.835e-07|Predeclared primary; marginal signal above null, but not incremental model value|
+|K — multiscale cross-field junction|3.324e-05|7.019e-06|-5.580e-07|Weak OOF signal; no individual spatial model comparison run|
+|L — unsigned as-coded variant|1.719e-05|1.691e-05|-9.060e-08|Exploratory only: implementation differed from registered signed side contrast; no individual spatial model comparison|
+
+**Implementation review amendment:** a final code audit found that L's code used positive depth/gravity gradient agreement with an *unsigned* projected conductivity-residual gradient, not the registered signed opposing-side contrasts. Its MINE row is exploratory for that as-coded variant, not evidence for registered L. J/K definitions and the primary J comparison are unaffected; see [the amendment record](knowledge/hypotheses-v3-review-amendment.md). The locked, equal-budget spatial comparison was 19 bands vs 19+D vs 19+D+J, with four geographic quadrants, 1km training exclusion, fixed HGB settings, 0.8% emission and 2.8-cell spacing. J+D compared with D yielded **ΔDTI +0.000712**, only **2/4** folds positive, paired 20km-block 95% interval **[-0.004698, +0.006037]**: **FAIL**. J+D did beat the 19-band baseline by +0.008785, but that does not establish J's added value; D supplies most of the improvement. No new submission file or competition slot was used.
+
+### Ranked hypotheses and external-source status
+
+|Rank|Candidate and layers|Signature / missing-fault rationale|Qualitative expected DTI opportunity / cost / status|
+|---|---|---|---|
+|1|J — `tmi`, `iso_grav_anom`, `cond_surf`, `det_elev_slope`|Two-scale magnetic flank-slope asymmetry, corroborated by gravity edge and positive local conductivity residual; a buried damage/alteration boundary may persist with weak relief.|**Moderate, unquantified prior**; low–medium compute, local data. Not present in D or A–I definitions; related topographic asymmetry exists in sibling work. **Incremental spatial gate failed.**|
+|2|K — `tmi`, `iso_grav_anom`|Cross-field gradient strength gated by structure-tensor junctionness that persists at two scales; transfer/intersection structures could focus permeability.|**Moderate opportunity, ranked below J** after sibling-overlap penalty; medium compute. Different from scalar co-edge because it tests local multidirectional persistence. No solo spatial validation.|
+|3|L — `depth_to_base_surf`, `iso_grav_anom`, `cond_surf`, `det_elev_slope`|Registered concept: signed co-polarized basement-depth/gravity side-step with a conductivity-residual side response; concealed basin throw may lack a scarp.|**Low–moderate qualitative opportunity**; low compute. Different from edge-amplitude or gradient-discordance features; metadata says basement while organizer prose says conductive base. **Implementation drift found:** current MINE is for an unsigned variant, not this hypothesis; no solo spatial validation.|
+|4 (blocked)|X — official GeoDAWN Area-2 magnetic/radiometric flight-line CSVs and flight paths|Test whether candidate lineaments reproduce across adjacent traverses and are not survey-parallel residuals.|Potentially **moderate precision gain if a line residual is measured**, but very high data/processing cost. USGS lists raw Area-2 magnetic CSV ZIP (3.74 GB) and radiometric CSV ZIP (427.33 MB); shell TLS failed earlier and raw bytes are absent. Metadata is readable, but X is **not implementable or MINE-tested** until official bytes/schema are obtained.|
+
+Sources: [DrivenData problem and data contract](https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/), [staff clarification that near-catalogue new truth can exist](https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516/4), [USGS GeoDAWN DOI 10.5066/P93LGLVQ](https://doi.org/10.5066/P93LGLVQ), [USGS ScienceBase raw-file list](https://www.sciencebase.gov/catalog/item/657e1d85d34e23d3533209f7), and the [USGS blind-geothermal integrated-study abstract](https://pubs.usgs.gov/publication/70221765). A published blind system motivates testing structural intersections; it does not validate J/K or these pixel predictions. The USGS describes GeoDAWN Area-2 traverse lines at 400m spacing and magnetic tie-line/micro-leveling; interpolation to 100m does not confer 100m source resolving power.
+
+## Promotion gate and next steps
+
+**Keep `knowledge/slot-gate.json` closed.** Reopen only after (1) the exact current-best input, code, splits and checkpoints are restored or regenerated and hash-verified; (2) the current-best and proposed artifact are evaluated under the same frozen spatial test design with paired uncertainty; (3) a candidate beats that benchmark without post-hoc budget/threshold changes; and (4) portal acceptance is separately tested. Do not treat public label zeros as confirmed negatives or the sibling's calibrated SGMC proxy as expert hidden truth.
+
+Next work: reconcile GEMSDOE32 code/evidence/input mismatches; retrieve exact current-best raster and holdout sources; independently rebuild its detector fold-locally on the same splits; test flight-line residuals only if official data bytes can be obtained; add spatially preserved MINE nulls and conditional/incremental information checks; then consider another preregistration. Preserve the final-round discovery opportunity and do not auto-upload.
+
+## Reproduce v3 research
+
+Python 3.11+, pinned dependencies in `requirements-lock.txt`, about 3GB RAM and CPU are sufficient. Data are restored by the checksum-pinned owner-mirror downloader; the mirror is not independently organizer-authenticated.
 
 ```bash
 python -m venv .venv
 .venv/bin/pip install -r requirements-lock.txt
 bash scripts/download_competition_data.sh
 .venv/bin/python scripts/prepare_data.py
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/build_features.py
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/run_mine.py
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/run_validation.py
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/generate_submission.py
-.venv/bin/python scripts/verify_uniqueness.py
-.venv/bin/python scripts/build_site.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/build_features_v3.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/run_mine_v3.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python scripts/run_validation_v3.py
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q
+.venv/bin/python scripts/build_site.py
 ```
 
-The downloader also restores the H33 reference for comparison only. It fails on missing data/hash mismatch; it never substitutes random fields. Large source/intermediate rasters stay under ignored `data/`. GitHub Pages is static: it serves a precomputed artifact; it does not train in a browser. The research workflow regenerates files as downloadable Actions artifacts, without auto-uploading to DrivenData. The Pages workflow refreshes source status daily, preserving last known values and flagging fetch failures rather than inventing a live feed.
+`data/` is ignored. A static site serves a previously generated research file; it does not train in a browser. The feed is a timestamped organizer leaderboard observation, not a continuous API guarantee. No automatic competition upload exists.
 
-## Sources, constraints and next session
+## Limitations and integrity
 
-- [Competition task, metric and format](https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/)
-- [Staff mask clarification](https://community.drivendata.org/t/scoring-clarification-are-known-usgs-ingenious-faults-masked-when-scoring-and-are-they-in-the-final-round-label-set/11516/4)
-- [Official rules PDF](https://docs.nlr.gov/docs/fy26osti/96647.pdf) — all parsed sections read; three submissions/week, one final selection, AI-use narrative disclosure and reproducible solution assets.
-- [MINE, ICML 2018](https://proceedings.mlr.press/v80/belghazi18a.html), [MI bias/variance, ICML 2019](https://proceedings.mlr.press/v97/poole19a.html)
-- [Source register](knowledge/source-register.json), [36 prior site snapshots](knowledge/site-review.json), [hypothesis preregistration](knowledge/hypotheses-preregistered.md).
-
-Mirrors match owner SHA-256 receipts, not an independently authenticated organizer download. Known fault labels are incomplete; zero is unlabelled, not confirmed fault absence. No account login, hidden labels, private score, field confirmation or eligibility certification is available. Direct Dropbox shell downloads failed; the GitHub data bridge worked. No new GPU access is needed for this model.
-
-Next: freeze a fresh nested spatial design for feature D; reproduce the strongest prior detector fold-locally; test 1m LiDAR and flight-line confounders; resolve ambiguous feature metadata; preserve spatial null structure in MI controls. Do not spend a slot because a single noisy delta is positive.
+- Labels are incomplete positive-unlabelled traces. Zero is not verified absence; public-label metrics can penalize unlabelled real faults.
+- MINE is a bounded, finite-capacity DV estimator; small marginal values can miss interactions and do not equal conditional information or test-set performance. Full-fit estimates are optimistic; OOF folds and global-shuffle nulls are diagnostic, not independent truth.
+- No private labels, current-best reproducible holdout, account session, portal acceptance, field validation or independent organizer data download is available.
+- Core bands are owner-mirrored with hash receipts. Hash agreement proves mirror integrity against owner receipts, not organizer authentication.
+- The generated D raster's endpoint protection and catalogue exclusion are heuristics; staff says nearby hidden labels can exist.
+- GeoDAWN/3DEP data are not assumed obtained just because an official metadata page is public. External content must be licensed and reproducibly shared per contest rules.
+- We cannot promise a leaderboard score or prize. The public leading score was 0.3262 at the recorded snapshot; the observed user-reported H33 mapping remains unverified by artifact hash.
 
 ## Core values
 
 **Maximize P(Win).** Prioritize truthful evidence, scarce-slot discipline and reproducible scientific improvement over a favorable-looking number.
 
 **Own the Outcome.** Withdraw misleading inherited artifacts, repair the complete pipeline, report failed gates, and keep limitations visible.
+
+---
 
 ## User project prompt — read at the start of every session
 
