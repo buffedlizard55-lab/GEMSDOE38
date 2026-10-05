@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Summary — GEMSDOE38</title>
+<style>
+:root { --bg:#0f172a; --card:#1e293b; --accent:#38bdf8; --text:#e2e8f0; --muted:#94a3b8; }
+body { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); margin:0; line-height:1.6; }
+.container { max-width:900px; margin:0 auto; padding:0 1.5rem; }
+h1,h2,h3 { color:var(--accent); }
+.card { background:var(--card); border-radius:12px; padding:1.5rem; margin:1rem 0; border:1px solid #334155; }
+.btn { display:inline-block; background:var(--accent); color:#0f172a; padding:0.8rem 1.5rem; border-radius:8px; text-decoration:none; font-weight:600; margin:0.5rem 0; }
+code { background:#334155; padding:0.2rem 0.4rem; border-radius:4px; }
+pre { background:#0f172a; padding:1rem; border-radius:8px; overflow-x:auto; border:1px solid #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Executive Summary — How to Submit</h1>
+<p><a href="index.html">← Back to main</a></p>
+
+<div class="card">
+<h2>Step-by-step (2 minutes)</h2>
+<ol>
+<li><strong>Download</strong> <a href="downloads/gemsdoe38-h38-mt-edge-aster-38888-20261005T000000Z-e5eb6e7e-allfinite.tif" download>primary .tif (325 KB)</a> — all-finite, range-hardened, no “Predicted values must be in range [0,1]” error</li>
+<li>Open <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/submissions/" target="_blank">DrivenData submissions page</a> (login required)</li>
+<li>Click “File to submit” → Choose the .tif you just downloaded (or .zip)</li>
+<li>Note (optional): paste <code>GEMSDOE38 H38-MT-EDGE-ASTER | 38,888 dots, 0 within 200m catalogue (simulated), Poisson 300m, MT edge + gravity worm + ASTER clay corroborated | id e5eb6e7e | all-finite range-hardened</code></li>
+<li>Click Create → should succeed (if you see range error, use the all-finite version, not NaN version with stray NaN inside footprint)</li>
+</ol>
+</div>
+
+<div class="card">
+<h2>Submission format requirements (from official page)</h2>
+<ul>
+<li>Same CRS as training data: EPSG:32611 (UTM 11N)</li>
+<li>Same resolution: 100m</li>
+<li>Same bounds: 3292×3730, transform (100,0,243350,0,-100,4508550)</li>
+<li>Single layer, float32, values between 0 and 1, higher = higher fault probability</li>
+<li>Data outside bounds is null or NaN (but all-finite with zeros outside also accepted per reference solution and identical scores for NaN vs all-finite)</li>
+</ul>
+<p>Verified: <a href="https://www.drivendata.org/competitions/306/competition-doe-gems/page/967/#submission-format" target="_blank">official submission format</a></p>
+</div>
+
+<div class="card">
+<h2>Why “Predicted values must be in range [0,1]” happens and how we fixed it</h2>
+<p>Two mechanisms, both measured on competition's own data:</p>
+<ol>
+<li><strong>Float32 sentinel -3.4e38:</strong> <code>training_features.tif</code> encodes nodata as -3.4028234663852886e+38. All 19 bands carry it on 3,061 pixels inside 5,167,373 footprint (band 6 tc: 3073). Left unsanitized, those ship values near -3.4e38 → outside [0,1].</li>
+<li><strong>Valid mask smaller than template:</strong> Band 1 valid 5,165,852 vs template 5,167,373 → 3,061 scored pixels as NaN if mask from feature band.</li>
+</ol>
+<p>Fix: footprint only from <code>np.isfinite(sample_submission.tif)</code>, map NaN→0, +Inf→1, -Inf→0, clip to [0,1], write with nodata=None, re-read bytes and assert all 12,279,160 finite and in range.</p>
+<p>Measurement record: <a href="https://buffedlizard55-lab.github.io/GEMSDOE30/docs/research/range-error-root-cause-2026-10-03.md" target="_blank">GEMSDOE30 range-error root cause</a></p>
+</div>
+
+<div class="card">
+<h2>What this file is and is not</h2>
+<ul>
+<li><strong>Is:</strong> Unique candidate (38,888 dots, not 37,654 nor 44,090), all-finite, format-verified, built from power-law fault population + Poisson-disk + MT edge + gravity + ASTER corroboration</li>
+<li><strong>Is not:</strong> Organizer-scored. No score in this repo is organizer-verified. This is research candidate, not proven improvement. Only hidden new-fault labels can score it.</li>
+<li><strong>Unique vs registry:</strong> Distinct against all 23 historic group submissions (Jaccard <0.8 threshold). Most similar is GEMSDOE32 H33-2-B2 (Jaccard ~0.3 estimated, different count and physics).</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>Verification steps (run locally)</h2>
+<pre>
+python3 - << 'PY'
+import rasterio, numpy as np
+path = "docs/downloads/gemsdoe38-h38-mt-edge-aster-38888-20261005T000000Z-e5eb6e7e-allfinite.tif"
+with rasterio.open(path) as src:
+    data = src.read(1)
+    print(f"Shape: {data.shape}, dtype: {data.dtype}, crs: {src.crs}")
+    print(f"Transform: {src.transform}")
+    print(f"Min: {np.min(data)}, Max: {np.max(data)}, Mean: {np.mean(data)}")
+    print(f"Finite: {np.sum(np.isfinite(data))}/{data.size}, NaN: {np.sum(np.isnan(data))}")
+    print(f"<0: {np.sum(data<0)}, >1: {np.sum(data>1)}")
+    assert data.shape == (3730,3292)
+    assert data.dtype == np.float32
+    assert np.all(np.isfinite(data))
+    assert np.min(data)>=0 and np.max(data)<=1
+    print("PASS")
+PY
+</pre>
+</div>
+
+<p><a href="index.html">← Back</a></p>
+</div>
+</body>
+</html>
