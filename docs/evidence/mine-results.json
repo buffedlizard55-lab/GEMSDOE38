@@ -1,0 +1,171 @@
+{
+  "units": "nats",
+  "label_semantics": "known catalogue vs unlabelled; NOT hidden new-fault truth",
+  "population": 5167373,
+  "positives": 60988,
+  "label_entropy_nats": 0.06412918024082224,
+  "method": "DV-MINE, natural prevalence, binary-exact product marginal, EMA .99, 24 tanh units, 800 stochastic steps, batch 512",
+  "seeds": [
+    38,
+    138,
+    238
+  ],
+  "features": {
+    "A_quiet_persistent_magnetics": {
+      "full_fit_nats": [
+        1.900300778397146e-05,
+        1.9930877111221795e-05,
+        1.2090393408069333e-05
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          1.7237265294064302e-05,
+          -2.0236612629880718e-05,
+          1.946684664844503e-05,
+          -5.941990329045091e-06
+        ],
+        [
+          1.3904330810717708e-05,
+          -1.9227729296663124e-05,
+          2.0830799525604904e-05,
+          -6.5061445143552166e-06
+        ],
+        [
+          1.4695381272245012e-05,
+          -9.399064552884084e-06,
+          1.4041746146435663e-05,
+          -5.554895161352658e-07
+        ]
+      ],
+      "shuffled_null_nats": [
+        -8.700288743127005e-07,
+        -1.5300465979958822e-07,
+        -1.521791455488808e-07
+      ],
+      "full_fit_mean_nats": 1.7008092767754196e-05,
+      "full_fit_seed_sd": 4.284047223863981e-06,
+      "oof_weighted_mean_nats": 4.250932161351915e-06,
+      "null_mean_nats": -3.917375598870565e-07,
+      "screen": "retain for interaction study only"
+    },
+    "B_depth_gravity_discordance": {
+      "full_fit_nats": [
+        1.7296849449711937e-06,
+        1.6024829800932727e-06,
+        2.653685089587521e-07
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          -5.1258400299313e-05,
+          -6.2510036898293445e-06,
+          -1.4758904947804324e-05,
+          7.820617743820035e-07
+        ],
+        [
+          -4.97315020223342e-05,
+          -9.797148036639128e-06,
+          -2.35728844246684e-05,
+          2.271196642891077e-06
+        ],
+        [
+          -9.18255030880194e-06,
+          -1.0128645066505293e-05,
+          -9.384871524346916e-06,
+          -6.341039658935843e-06
+        ]
+      ],
+      "shuffled_null_nats": [
+        -9.558194077191606e-07,
+        -2.7707786546746216e-07,
+        -2.3101601016872753e-07
+      ],
+      "full_fit_mean_nats": 1.1991788113410728e-06,
+      "full_fit_seed_sd": 8.112005581813427e-07,
+      "oof_weighted_mean_nats": -2.1615954904126947e-05,
+      "null_mean_nats": -4.879710944517834e-07,
+      "screen": "no stable positive OOF marginal evidence; do not claim information-free"
+    },
+    "C_conductivity_residual_edge": {
+      "full_fit_nats": [
+        2.251058574227402e-05,
+        2.1079283068690252e-05,
+        6.34615460973903e-06
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          1.6972954486528524e-05,
+          1.9580234185579727e-05,
+          -7.235130747657373e-05,
+          4.939244394298187e-05
+        ],
+        [
+          2.0289911700041574e-05,
+          1.6007827510221978e-05,
+          -7.504592495990829e-05,
+          3.575399012030814e-05
+        ],
+        [
+          4.83445998291504e-06,
+          6.633073108816556e-06,
+          -1.167832956478626e-05,
+          3.6908225664877836e-06
+        ]
+      ],
+      "shuffled_null_nats": [
+        -9.079441427028989e-07,
+        2.2138270962127407e-07,
+        -4.972347656534426e-08
+      ],
+      "full_fit_mean_nats": 1.6645341140234433e-05,
+      "full_fit_seed_sd": 8.94802152591876e-06,
+      "oof_weighted_mean_nats": 9.097707062338674e-06,
+      "null_mean_nats": -2.4542830321565637e-07,
+      "screen": "retain for interaction study only"
+    },
+    "D_topographic_step_proxy": {
+      "full_fit_nats": [
+        0.00014841433056910023,
+        0.00017808746132286224,
+        0.00011855212182862451
+      ],
+      "spatial_oof_fold_nats": [
+        [
+          0.0001446694015715469,
+          3.8872342392838924e-05,
+          0.00022251057934930853,
+          9.540240670524334e-05
+        ],
+        [
+          0.00017185990277177564,
+          5.153043143394341e-05,
+          0.0002735617695243768,
+          0.00011023383586688737
+        ],
+        [
+          0.00016258118353559142,
+          4.0885503704589377e-05,
+          0.00016519887607251843,
+          7.455806600185563e-05
+        ]
+      ],
+      "shuffled_null_nats": [
+        -5.198015400435796e-07,
+        -1.5899726429034755e-07,
+        -3.053162131901044e-07
+      ],
+      "full_fit_mean_nats": 0.00014835130457352898,
+      "full_fit_seed_sd": 2.9767719788062773e-05,
+      "oof_weighted_mean_nats": 0.00012556536334136528,
+      "null_mean_nats": -3.280383391746772e-07,
+      "screen": "retain for interaction study only"
+    }
+  },
+  "limitations": [
+    "Full-fit estimates use training labels at evaluation and can be optimistic.",
+    "OOF values are fold-wise neural DV diagnostics, not a guaranteed unbiased or lower-variance MI estimator.",
+    "Full-set feature screening would contaminate model validation if used to select features before that validation. The top candidate was preregistered independently.",
+    "No marginal-MI threshold can safely discard all synergistic features.",
+    "Null is globally label-shuffled; destroys spatial autocorrelation, so it is an optimization control, not spatial significance.",
+    "Sampling for optimization uses the whole training population as its sampling frame, but finite steps need not visit every row; evaluation does visit every row."
+  ]
+}

@@ -1,0 +1,22 @@
+name: Evidence checks
+on:
+  pull_request:
+  push:
+    branches: [main, arena/01a1096b-gemsdoe38]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements-lock.txt
+      - run: python -m pytest -q
+      - run: python -m compileall -q src scripts

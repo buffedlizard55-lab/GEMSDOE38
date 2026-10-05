@@ -1,0 +1,37 @@
+name: Generate measured-data research GeoTIFF
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m venv .venv && .venv/bin/pip install -r requirements-lock.txt
+      - run: bash scripts/download_competition_data.sh
+      - run: .venv/bin/python scripts/prepare_data.py
+      - run: .venv/bin/python scripts/build_features.py
+      - run: .venv/bin/python scripts/run_mine.py
+      - run: .venv/bin/python scripts/run_validation.py
+      - run: .venv/bin/python scripts/generate_submission.py
+      - run: .venv/bin/python scripts/verify_uniqueness.py
+      - run: .venv/bin/python scripts/make_map.py && .venv/bin/python scripts/build_site.py
+      - run: .venv/bin/python -m pytest -q
+      - uses: actions/upload-artifact@v4
+        with:
+          name: research-only-geotiff-and-evidence
+          path: |
+            docs/downloads/
+            knowledge/*results.json
+            knowledge/submission-manifest.json
+            knowledge/uniqueness-audit.json

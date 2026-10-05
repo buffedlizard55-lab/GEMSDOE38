@@ -1,0 +1,120 @@
+{
+  "name": "gems38-realdata-A-20261005-736488e5ab49",
+  "submission_note": "G38 measured 19 bands + low-relief multiscale magnetic edge; HGB120, d2.8 sparse. Research-only: holdout gate closed; no leaderboard score.",
+  "status": "RESEARCH_ONLY_DO_NOT_SPEND_SLOT",
+  "approved_for_competition_submission": false,
+  "leaderboard_score": null,
+  "algorithm": "Fresh HGB fit on measured 19 bands + preregistered A. No prior prediction used as input; no random fault geometry.",
+  "training": {
+    "train_pool": 5167373,
+    "sampled_train": 260988,
+    "sampled_positive": 60988,
+    "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+  },
+  "prediction_encoding": "binary ranking decision, NOT calibrated fault probability",
+  "geometry": {
+    "separation_px": 2.8,
+    "catalogue_exclusion_px": 2,
+    "positive_pixels": 41339
+  },
+  "compared_h33": {
+    "pixel_difference_count": 76607,
+    "reference_sha256": "c55bafc470054e8271dcb89347a17e07fefe50de6af6e6ba6c4b169ef7ab6fa9"
+  },
+  "canonical_pixels_sha256": "736488e5ab49c1f2890cb64605a935c983bf9a15300702d40965db214796760e",
+  "files": [
+    {
+      "path": "docs/downloads/gems38-realdata-A-20261005-736488e5ab49-zero.tif",
+      "passed": true,
+      "checks": {
+        "single_band": true,
+        "float32": true,
+        "shape": true,
+        "crs": true,
+        "transform": true,
+        "epsg_32611": true,
+        "inside_finite": true,
+        "inside_range": true,
+        "all_finite": true,
+        "outside_zero": true,
+        "nodata_unset": true
+      },
+      "outside_policy": "zero",
+      "shape": [
+        3730,
+        3292
+      ],
+      "crs": "EPSG:32611",
+      "transform": [
+        100.0,
+        0.0,
+        243350.0,
+        0.0,
+        -100.0,
+        4508550.0
+      ],
+      "positive_pixels": 41339,
+      "finite_pixels": 12279160,
+      "nan_pixels": 0,
+      "min": 0.0,
+      "max": 1.0,
+      "sha256": "6e8486843141a826592324b39602524321abf6c0b6c12e3cb02cd054b216960e",
+      "canonical_pixels_sha256": "736488e5ab49c1f2890cb64605a935c983bf9a15300702d40965db214796760e",
+      "portal_certification": false,
+      "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
+    },
+    {
+      "path": "docs/downloads/gems38-realdata-A-20261005-736488e5ab49-nan.tif",
+      "passed": true,
+      "checks": {
+        "single_band": true,
+        "float32": true,
+        "shape": true,
+        "crs": true,
+        "transform": true,
+        "epsg_32611": true,
+        "inside_finite": true,
+        "inside_range": true,
+        "outside_nan": true,
+        "nodata_nan": true
+      },
+      "outside_policy": "nan",
+      "shape": [
+        3730,
+        3292
+      ],
+      "crs": "EPSG:32611",
+      "transform": [
+        100.0,
+        0.0,
+        243350.0,
+        0.0,
+        -100.0,
+        4508550.0
+      ],
+      "positive_pixels": 41339,
+      "finite_pixels": 5167373,
+      "nan_pixels": 7111787,
+      "min": 0.0,
+      "max": 1.0,
+      "sha256": "271f784923b0c001aa1a7e26fb7848b94bc7d1eaddf3a36da298488210c2b74b",
+      "canonical_pixels_sha256": "736488e5ab49c1f2890cb64605a935c983bf9a15300702d40965db214796760e",
+      "portal_certification": false,
+      "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
+    }
+  ],
+  "validation": {
+    "baseline_dti": 0.13143768000750838,
+    "candidate_dti": 0.1337092460597094,
+    "delta": 0.002271566052201024,
+    "paired_block_bootstrap_95pct": [
+      -0.0012633735439281923,
+      0.007053914049815668
+    ],
+    "n_blocks": 180,
+    "positive_folds": 2
+  },
+  "gate_reason": "No independently held-out current-best H33 checkpoint; hidden new-fault truth unavailable. Never auto-submit.",
+  "postprocessing_caveat": "Off-catalogue 200m prune is used only for final prediction; cannot be validated against the same full catalogue (it removes its positives). Fresh-baseline holdout tests unpruned emission rules; not final file hidden-label performance.",
+  "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation.py; python scripts/generate_submission.py"
+}

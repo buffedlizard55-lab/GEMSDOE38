@@ -1,213 +1,111 @@
-"""
-MINE - Mutual Information Neural Estimation
-Belghazi et al., ICML 2018: https://arxiv.org/abs/1801.04062
+"""CPU NumPy MINE for binary labels, DV objective in NATS.
+Belghazi et al. (2018): https://proceedings.mlr.press/v80/belghazi18a.html
 
-Quantify what a feature adds with an information-theoretic estimator,
-not a noisy single-number ablation.
-
-With faults covering ~1% of area, holdout ablation runs on few positives
-=> noisy delta. MI directly measures how much feature's value reduces
-uncertainty about true label, independent of whether model exploits it well.
-
-This implementation computes MINE-estimated MI between each candidate
-feature and true label on full label set.
-
-Reference: Belghazi, Baratin, Rajeswar, Ozair, Bengio, Courville, Hjelm
-MINE: Mutual Information Neural Estimation, ICML 2018.
-
-Verified sources:
-- Paper: https://arxiv.org/abs/1801.04062
-- Official PyTorch impl: https://github.com/gtegner/mine-pytorch (MIT)
+Exact sum over binary p(y) replaces shuffled marginal Monte Carlo. Balanced
+minibatches use natural-prevalence importance weights; class balancing MUST
+NOT change the estimand. EMA denominator corrects stochastic log-gradient
+bias. Neural optimization can underestimate MI; in-sample estimates can
+be optimistic. Negative estimates are retained, never clipped into evidence.
 """
 
-import torch
-import torch.nn as nn
 import numpy as np
-from typing import Tuple, List
+from scipy.special import logsumexp
 
-class MINE(nn.Module):
-    """
-    MINE estimator network T(x,y) -> R
-    Donsker-Varadhan representation:
-    I(X;Y) = sup_T E_{p(x,y)}[T] - log E_{p(x)p(y)}[exp(T)]
-    """
-    def __init__(self, input_dim: int = 2, hidden_dim: int = 128):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(input_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.ReLU(),
-            nn.Linear(hidden_dim, 1)
-        )
-    
+
+class MINE:
+    def __init__(self, dim=1, hidden=24, seed=38):
+        rng = np.random.default_rng(seed)
+        self.rng = rng
+        self.params = [
+            rng.normal(0, 0.3, (dim + 1, hidden)),
+            np.zeros(hidden),
+            rng.normal(0, 0.1, (hidden, 1)),
+            np.zeros(1),
+        ]
+        self.m = [np.zeros_like(a) for a in self.params]
+        self.v = [np.zeros_like(a) for a in self.params]
+        self.ema = None
+
     def forward(self, x, y):
-        # x: (B, Fx), y: (B, 1) or (B, Fy)
-        # Concatenate
-        if y.dim() == 1:
-            y = y.unsqueeze(1)
-        if x.dim() == 1:
-            x = x.unsqueeze(1)
-        inp = torch.cat([x, y], dim=1)
-        return self.net(inp)
+        z = np.column_stack([x, y])
+        h = np.tanh(z @ self.params[0] + self.params[1])
+        raw = (h @ self.params[2] + self.params[3]).ravel()
+        t = 12 * np.tanh(raw / 12)  # bounded critic for numerical stability
+        return t, (z, h, 1 - (t / 12) ** 2)
 
-def mine_estimate(
-    feature: np.ndarray,
-    label: np.ndarray,
-    hidden_dim: int = 128,
-    lr: float = 1e-3,
-    batch_size: int = 512,
-    epochs: int = 100,
-    device: str = 'cpu',
-    seed: int = 0
-) -> Tuple[float, List[float]]:
-    """
-    Compute MINE MI estimate between feature (continuous) and label (binary or continuous).
-    Uses full label set, not only small holdout.
-    
-    Args:
-        feature: (N,) or (N, D) continuous feature values
-        label: (N,) binary or continuous labels
-        Returns: (mi_estimate, history)
-    """
-    torch.manual_seed(seed)
-    np.random.seed(seed)
-    
-    # Normalize feature to zero mean, unit var for stability
-    if feature.ndim == 1:
-        feature = feature.reshape(-1, 1)
-    feat_mean = feature.mean(axis=0, keepdims=True)
-    feat_std = feature.std(axis=0, keepdims=True) + 1e-8
-    feature_norm = (feature - feat_mean) / feat_std
-    
-    label = label.reshape(-1, 1).astype(np.float32)
-    # For binary labels, keep as is, but also normalize if continuous
-    if len(np.unique(label)) > 2:
-        l_mean = label.mean()
-        l_std = label.std() + 1e-8
-        label_norm = (label - l_mean) / l_std
-    else:
-        label_norm = label.astype(np.float32)
-    
-    N = feature_norm.shape[0]
-    input_dim = feature_norm.shape[1] + label_norm.shape[1]
-    
-    model = MINE(input_dim=input_dim, hidden_dim=hidden_dim).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    
-    # Convert to tensors
-    feat_t = torch.from_numpy(feature_norm.astype(np.float32)).to(device)
-    label_t = torch.from_numpy(label_norm.astype(np.float32)).to(device)
-    
-    history = []
-    best_mi = -1e9
-    
-    for epoch in range(epochs):
-        # Shuffle
-        perm = torch.randperm(N)
-        feat_shuf = feat_t[perm]
-        label_shuf = label_t[perm]
-        
-        epoch_losses = []
-        for i in range(0, N, batch_size):
-            b_feat = feat_shuf[i:i+batch_size]
-            b_label = label_shuf[i:i+batch_size]
-            
-            # Joint: (x,y) from same index
-            t_joint = model(b_feat, b_label)  # (B,1)
-            
-            # Marginal: shuffle y within batch to get p(x)p(y)
-            b_label_marg = b_label[torch.randperm(b_label.shape[0])]
-            t_marg = model(b_feat, b_label_marg)
-            
-            # DV lower bound
-            # E_p(x,y)[T] - log E_{p(x)p(y)}[exp(T)]
-            # Use exponential moving average for log term stability (as in original paper)
-            mi_lb = t_joint.mean() - torch.log(torch.exp(t_marg).mean() + 1e-8)
-            loss = -mi_lb  # maximize mi
-            
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            
-            epoch_losses.append(mi_lb.item())
-        
-        mi_epoch = np.mean(epoch_losses)
-        history.append(mi_epoch)
-        if mi_epoch > best_mi:
-            best_mi = mi_epoch
-    
-    # Final estimate with larger batch for stability
-    with torch.no_grad():
-        t_joint = model(feat_t, label_t)
-        # For marginal, shuffle labels
-        perm = torch.randperm(N)
-        t_marg = model(feat_t, label_t[perm])
-        mi_final = t_joint.mean().item() - np.log(np.exp(t_marg.cpu().numpy()).mean() + 1e-8)
-    
-    return float(mi_final), history
+    def gradient(self, cache, dt):
+        z, h, slope = cache
+        dr = (dt * slope)[:, None]
+        dh = dr @ self.params[2].T * (1 - h * h)
+        return [z.T @ dh, dh.sum(0), h.T @ dr, dr.sum(0)]
 
-def evaluate_candidate_features(
-    features_dict: dict,
-    labels: np.ndarray,
-    **kwargs
-) -> dict:
-    """
-    Evaluate multiple candidate features via MINE MI.
-    features_dict: name -> np array (N,) or (N,D)
-    Returns dict name -> MI estimate
-    """
-    results = {}
-    for name, feat in features_dict.items():
-        mi, hist = mine_estimate(feat, labels, **kwargs)
-        results[name] = {
-            'mi': mi,
-            'history': hist,
-            'mean_feature': float(np.mean(feat)),
-            'std_feature': float(np.std(feat))
-        }
-        print(f"[MINE] {name}: MI={mi:.5f} bits (approx), feat_mean={results[name]['mean_feature']:.3f}")
-    return results
+    def step(self, x, y, p, iteration, lr=0.003):
+        # x consists of equal-sized strata, not the population distribution.
+        weight = np.where(y == 1, p, 1 - p) / (len(y) / 2)
+        t0, c0 = self.forward(x, np.zeros(len(x)))
+        t1, c1 = self.forward(x, np.ones(len(x)))
+        e0, e1 = np.exp(t0), np.exp(t1)
+        marginal = float(np.sum(weight * ((1 - p) * e0 + p * e1)))
+        self.ema = marginal if self.ema is None else 0.99 * self.ema + 0.01 * marginal
+        d0 = weight * ((1 - y) - (1 - p) * e0 / self.ema)
+        d1 = weight * (y - p * e1 / self.ema)
+        grads = [a + b for a, b in zip(self.gradient(c0, d0), self.gradient(c1, d1))]
+        for j, (param, g) in enumerate(zip(self.params, grads)):
+            g = np.clip(g, -5, 5)
+            self.m[j] = 0.9 * self.m[j] + 0.1 * g
+            self.v[j] = 0.999 * self.v[j] + 0.001 * g * g
+            param += (
+                lr
+                * (self.m[j] / (1 - 0.9**iteration))
+                / (np.sqrt(self.v[j] / (1 - 0.999**iteration)) + 1e-8)
+            )
 
-if __name__ == "__main__":
-    # Demo with synthetic data simulating GEMS scenario: 1% positives
-    N = 20000
-    np.random.seed(42)
-    # True labels: 1% faults
-    labels = (np.random.rand(N) < 0.01).astype(float)
-    
-    # Candidate features with varying informativeness
-    # Feature 1: highly informative (e.g., MT conductance edge)
-    f1 = labels + 0.3*np.random.randn(N)  # strong correlation
-    # Feature 2: moderately informative (ASTER clay)
-    f2 = 0.5*labels + 0.8*np.random.randn(N)
-    # Feature 3: weakly informative (random)
-    f3 = np.random.randn(N)
-    # Feature 4: geophysics (moderate)
-    f4 = 0.7*labels + 0.5*np.random.randn(N) + 0.2*np.sin(np.linspace(0, 10, N))
-    # Feature 5: noise with slight bias
-    f5 = 0.1*labels + np.random.randn(N)
-    
-    features = {
-        'mt_conductance_edge': f1,
-        'aster_clay_ratio': f2,
-        'random_noise': f3,
-        'gravity_gradient_worm': f4,
-        'knickpoint_density': f5
-    }
-    
-    results = evaluate_candidate_features(features, labels, epochs=50, batch_size=256, hidden_dim=64)
-    
-    # Rank by MI
-    ranked = sorted(results.items(), key=lambda x: x[1]['mi'], reverse=True)
-    print("\n=== RANKED BY MINE MI (higher = more informative) ===")
-    for i, (name, res) in enumerate(ranked):
-        print(f"{i+1}. {name}: MI={res['mi']:.5f}")
-    
-    # Filter: near-zero MI unlikely to earn back submission slot
-    print("\n=== FILTER DECISION ===")
-    for name, res in ranked:
-        if res['mi'] < 0.01:
-            print(f"DROP {name}: near-zero MI {res['mi']:.5f} -> unlikely to earn slot")
-        else:
-            print(f"KEEP {name}: MI {res['mi']:.5f} -> worth tuning")
+    def fit(self, x, y, indices=None, steps=800, batch=512):
+        x = np.asarray(x)
+        if x.ndim == 1:
+            x = x[:, None]
+        if not np.isfinite(x).all():
+            raise ValueError("MINE requires finite inputs")
+        if not np.isin(y, [0, 1]).all():
+            raise ValueError("Binary labels required")
+        idx = np.arange(len(y)) if indices is None else np.asarray(indices)
+        pos = idx[y[idx] == 1]
+        neg = idx[y[idx] == 0]
+        if not len(pos) or not len(neg):
+            raise ValueError("Both classes required")
+        probe = idx[self.rng.integers(len(idx), size=min(100000, len(idx)))]
+        self.mean = x[probe].mean(0)
+        self.std = np.maximum(x[probe].std(0), 1e-6)
+        p = len(pos) / len(idx)
+        for i in range(1, steps + 1):
+            sel = np.concatenate(
+                [self.rng.choice(neg, batch // 2), self.rng.choice(pos, batch // 2)]
+            )
+            xx = np.clip((x[sel] - self.mean) / self.std, -8, 8)
+            self.step(xx, y[sel], p, i)
+        return self
+
+    def evaluate(self, x, y, indices=None, batch=32768):
+        x = np.asarray(x)
+        if x.ndim == 1:
+            x = x[:, None]
+        idx = np.arange(len(y)) if indices is None else np.asarray(indices)
+        p = float(np.mean(y[idx]))
+        joint = 0.0
+        logtotal = -np.inf
+        for start in range(0, len(idx), batch):
+            sel = idx[start : start + batch]
+            xx = np.clip((x[sel] - self.mean) / self.std, -8, 8)
+            t0, _ = self.forward(xx, np.zeros(len(sel)))
+            t1, _ = self.forward(xx, np.ones(len(sel)))
+            joint += np.where(y[sel] == 1, t1, t0).sum()
+            marginal = np.logaddexp(
+                t0 + np.log(max(1 - p, 1e-300)), t1 + np.log(max(p, 1e-300))
+            )
+            logtotal = np.logaddexp(logtotal, logsumexp(marginal))
+        return float(joint / len(idx) - (logtotal - np.log(len(idx))))
+
+
+def entropy(y):
+    p = np.mean(y)
+    return float(-p * np.log(p) - (1 - p) * np.log(1 - p)) if 0 < p < 1 else 0.0

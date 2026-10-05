@@ -1,0 +1,167 @@
+{
+  "label_status": "spatial known-catalogue proxy ONLY; zeros unlabelled",
+  "hypothesis": "A preregistered; no model tuning after results",
+  "folds": [
+    {
+      "fold": 0,
+      "test_pixels": 2449030,
+      "positive_pixels": 29319,
+      "models": {
+        "baseline_19": {
+          "dti": 0.10863360422324332,
+          "terms": [
+            3007.0414237456416,
+            18119.870145225963,
+            26311.958576254365
+          ],
+          "predicted_pixels": 19592,
+          "train_pool": 2691770,
+          "sampled_train": 231306,
+          "sampled_positive": 31306,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        },
+        "candidate_19_plus_A": {
+          "dti": 0.10705024200504182,
+          "terms": [
+            2962.6153035568163,
+            18136.377973771967,
+            26356.384696443187
+          ],
+          "predicted_pixels": 19592,
+          "train_pool": 2691770,
+          "sampled_train": 231306,
+          "sampled_positive": 31306,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        }
+      },
+      "delta": -0.0015833622182015034
+    },
+    {
+      "fold": 1,
+      "test_pixels": 1366431,
+      "positive_pixels": 12596,
+      "models": {
+        "baseline_19": {
+          "dti": 0.17412742031202172,
+          "terms": [
+            2172.5710758732334,
+            9827.948030312586,
+            10423.428924126763
+          ],
+          "predicted_pixels": 10931,
+          "train_pool": 3781621,
+          "sampled_train": 248093,
+          "sampled_positive": 48093,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        },
+        "candidate_19_plus_A": {
+          "dti": 0.17102597941426173,
+          "terms": [
+            2133.515437678323,
+            9856.500632432555,
+            10462.484562321675
+          ],
+          "predicted_pixels": 10931,
+          "train_pool": 3781621,
+          "sampled_train": 248093,
+          "sampled_positive": 48093,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        }
+      },
+      "delta": -0.0031014408977599883
+    },
+    {
+      "fold": 2,
+      "test_pixels": 564135,
+      "positive_pixels": 9473,
+      "models": {
+        "baseline_19": {
+          "dti": 0.12453758424062596,
+          "terms": [
+            1070.3622382921494,
+            4011.1001433148026,
+            8402.63776170785
+          ],
+          "predicted_pixels": 4513,
+          "train_pool": 4580490,
+          "sampled_train": 251136,
+          "sampled_positive": 51136,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        },
+        "candidate_19_plus_A": {
+          "dti": 0.1461206311035934,
+          "terms": [
+            1259.4545109902244,
+            3944.941305194137,
+            8213.545489009775
+          ],
+          "predicted_pixels": 4513,
+          "train_pool": 4580490,
+          "sampled_train": 251136,
+          "sampled_positive": 51136,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        }
+      },
+      "delta": 0.021583046862967456
+    },
+    {
+      "fold": 3,
+      "test_pixels": 787777,
+      "positive_pixels": 9600,
+      "models": {
+        "baseline_19": {
+          "dti": 0.1488091095448654,
+          "terms": [
+            1352.608156266433,
+            5695.152414420457,
+            8247.39184373357
+          ],
+          "predicted_pixels": 6302,
+          "train_pool": 4364789,
+          "sampled_train": 251151,
+          "sampled_positive": 51151,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        },
+        "candidate_19_plus_A": {
+          "dti": 0.1518861656382576,
+          "terms": [
+            1381.1767260497097,
+            5686.319284719737,
+            8218.823273950295
+          ],
+          "predicted_pixels": 6302,
+          "train_pool": 4364789,
+          "sampled_train": 251151,
+          "sampled_positive": 51151,
+          "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
+        }
+      },
+      "delta": 0.0030770560933922053
+    }
+  ],
+  "gate": {
+    "approved": false,
+    "reason": "No independently held-out current-best H33 checkpoint; hidden new-fault truth unavailable. Never auto-submit."
+  },
+  "protocol": {
+    "folds": "4 geographic quadrants",
+    "train_buffer_pixels": 10,
+    "pixel_m": 100,
+    "emission_density": 0.008,
+    "separation_px": 2.8,
+    "model": "HistGradientBoosting 120 rounds, 15 leaves, learning_rate .07, L2 10; fixed a priori",
+    "bootstrap": "paired 20km spatial blocks; 1000 resamples; conditional on models; not total uncertainty"
+  },
+  "pooled": {
+    "baseline_dti": 0.13143768000750838,
+    "candidate_dti": 0.1337092460597094,
+    "delta": 0.002271566052201024,
+    "paired_block_bootstrap_95pct": [
+      -0.0012633735439281923,
+      0.007053914049815668
+    ],
+    "n_blocks": 180,
+    "positive_folds": 2
+  },
+  "beats_fresh_baseline": false
+}
