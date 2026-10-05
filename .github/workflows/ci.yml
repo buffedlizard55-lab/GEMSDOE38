@@ -2,7 +2,7 @@ name: Evidence checks
 on:
   pull_request:
   push:
-    branches: [main, arena/01a1096b-gemsdoe38]
+    branches: [main, arena/01a109a6-gemsdoe38]
 permissions:
   contents: read
 jobs:

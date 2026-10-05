@@ -1,4 +1,4 @@
-name: Generate measured-data research GeoTIFF
+name: Rebuild v3 research evidence (no competition upload)
 on:
   workflow_dispatch:
 permissions:
@@ -20,18 +20,20 @@ jobs:
       - run: python -m venv .venv && .venv/bin/pip install -r requirements-lock.txt
       - run: bash scripts/download_competition_data.sh
       - run: .venv/bin/python scripts/prepare_data.py
-      - run: .venv/bin/python scripts/build_features.py
-      - run: .venv/bin/python scripts/run_mine.py
-      - run: .venv/bin/python scripts/run_validation.py
-      - run: .venv/bin/python scripts/generate_submission.py
-      - run: .venv/bin/python scripts/verify_uniqueness.py
+      - run: .venv/bin/python scripts/build_features_v3.py
+      - run: .venv/bin/python scripts/run_mine_v3.py
+      - run: .venv/bin/python scripts/run_validation_v3.py
       - run: .venv/bin/python scripts/make_map.py && .venv/bin/python scripts/build_site.py
       - run: .venv/bin/python -m pytest -q
       - uses: actions/upload-artifact@v4
         with:
-          name: research-only-geotiff-and-evidence
+          name: v3-research-only-geotiff-and-evidence
           path: |
-            docs/downloads/
-            knowledge/*results.json
+            docs/downloads/*.tif
+            docs/downloads/*.zip
+            docs/downloads/submission-audit.json
+            knowledge/hypotheses-v3-*.json
+            knowledge/mine-results-v3.json
+            knowledge/validation-v3.json
+            knowledge/slot-gate.json
             knowledge/submission-manifest.json
-            knowledge/uniqueness-audit.json

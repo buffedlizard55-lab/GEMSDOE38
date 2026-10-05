@@ -1,0 +1,62 @@
+{
+  "status": "features_built_label_free_with_l_implementation_deviation",
+  "feature_order": [
+    "D_topographic_step_proxy",
+    "J_asymmetric_magnetic_flank",
+    "K_multiscale_crossfield_junction",
+    "L_unsigned_basin_depth_gravity_conductivity_gradient"
+  ],
+  "matrix": "data/derived/X_v3.npy; 19 provided bands followed by D,J,K,L",
+  "population": 5167373,
+  "positive_catalogue_labels": 60988,
+  "zero_semantics": "unlabelled, not confirmed fault absence",
+  "folds": "4 geographic quadrants as preregistered; same 1km exclusion used in the prior fixed benchmark",
+  "scaling": "feature transforms use input bands and footprint only; no labels, distances, candidate rasters, or hidden labels",
+  "statistics_scope": "footprint-wide quantile/scale statistics are label-free but transductive, not recomputed separately within each spatial training fold",
+  "implementation_deviation": {
+    "feature": "L_unsigned_basin_depth_gravity_conductivity_gradient",
+    "registered_hypothesis": "L_signed_basin_side_step",
+    "status": "exploratory_as_coded_only; preregistered signed opposing-side contrast was not implemented",
+    "record": "knowledge/hypotheses-v3-review-amendment.md"
+  },
+  "features": {
+    "D_topographic_step_proxy": {
+      "sha256_little_endian_float32_full_grid": "f140ff0bd498941921e1fac69c309ceb9036c6a8276ca7473cd7b18e1d5c3603",
+      "min_in_footprint": 6.42204668110935e-07,
+      "max_in_footprint": 8.272543907165527,
+      "mean_in_footprint": 0.0783967524766922,
+      "std_in_footprint": 0.17758452892303467,
+      "finite_in_footprint": 5167373
+    },
+    "J_asymmetric_magnetic_flank": {
+      "sha256_little_endian_float32_full_grid": "1121d822fbbcd4baeb172aa174ed6ca8404fc36f56a69aa8578c8e438adf2e6f",
+      "min_in_footprint": 0.0,
+      "max_in_footprint": 0.7481332421302795,
+      "mean_in_footprint": 0.008447248488664627,
+      "std_in_footprint": 0.014848568476736546,
+      "finite_in_footprint": 5167373
+    },
+    "K_multiscale_crossfield_junction": {
+      "sha256_little_endian_float32_full_grid": "591588ad2fa9e149f570fe3c22744f06d9a3241c5288e9dbe297d4e5354b3774",
+      "min_in_footprint": 4.0830513171385974e-05,
+      "max_in_footprint": 0.5025168657302856,
+      "mean_in_footprint": 0.02326158806681633,
+      "std_in_footprint": 0.023778036236763,
+      "finite_in_footprint": 5167373
+    },
+    "L_unsigned_basin_depth_gravity_conductivity_gradient": {
+      "sha256_little_endian_float32_full_grid": "600b4d37c7b2cccf2fe7d3e820c156b5888ebc21f3d7ed263d42a0ef4b006768",
+      "min_in_footprint": 0.0,
+      "max_in_footprint": 1.069384217262268,
+      "mean_in_footprint": 0.005421595647931099,
+      "std_in_footprint": 0.0234982967376709,
+      "finite_in_footprint": 5167373
+    }
+  },
+  "matrix_sha256_little_endian_float32_row_major": "54291ede6222b3da5d9ea9b78996aedeeed0494e1b1d806f40edd805aa83d2db",
+  "input_sha256": {
+    "training_features.tif": "4371c82e3b8339b807bdffcf4ef59a225520fe2988d521be208ae33743123bc5",
+    "labels.tif": "7ba308ccdc4418b31a178f4f1ef21aaa6e152e4028f2f6f64b01f7eb25ae4093",
+    "sample_submission.tif": "2176d08e485aa2cd2860ce8df539db4faf4d76163b38a4dd8c30a40454d35cbc"
+  }
+}

@@ -1,10 +1,10 @@
 {
   "name": "gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48",
-  "submission_note": "G38 D-topo-step 19+D HGB120 0.7pct s3.0 tipProt 200mExcl; OOF+0.00807 4/4 CI>0; MINE D 0.000148 nats",
-  "status": "CANDIDATE_VALIDATED_OOF_4FOLDS_CI_POSITIVE",
-  "approved_for_competition_submission": true,
+  "submission_note": "G38 D-step 19+D HGB120; 0.7%, 3.0px, tip-protected; local format-check only",
+  "status": "LOCAL_FORMAT_CHECKED_RESEARCH_ARTIFACT_SLOT_GATE_CLOSED",
+  "approved_for_competition_submission": false,
   "leaderboard_score": null,
-  "algorithm": "Full-data HGB 19 bands + D_topographic_step_proxy (MINE-validated top feature). 0.7% density, 3.0px Poisson-disk thinning, 200m catalogue exclusion with tip protection (retain within 3px of endpoints). No prior prediction as input.",
+  "algorithm": "Full-data HGB 19 bands + D_topographic_step_proxy; 0.7% density, 3.0px Poisson-disk thinning, 200m catalogue exclusion with tip protection (retain within 3px of endpoints). No prior prediction as input. The final emission/post-processing is not validated against a reproducible current-best holdout.",
   "training": {
     "train_pool": 5167373,
     "sampled_train": 260988,
@@ -105,21 +105,6 @@
       "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
     }
   ],
-  "validation": {
-    "dti": 0.13952239501695607,
-    "terms": [
-      8078.654624110956,
-      37504.38133284635,
-      52903.34537588907
-    ],
-    "n_blocks": 181,
-    "delta_vs_baseline": 0.008073806739314376,
-    "paired_bootstrap_95": [
-      0.001093291161127586,
-      0.01549770789029271
-    ],
-    "positive_folds": 4
-  },
   "mine": {
     "D_full_fit_mean_nats": 0.00014835130457352898,
     "D_oof_mean_nats": 0.00012556536334136528,
@@ -212,7 +197,7 @@
         "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
       }
     ],
-    "validation": {
+    "historical_v2_catalogue_proxy_result_not_artifact_validation": {
       "dti": 0.13864632767882853,
       "terms": [
         8026.159633812311,
@@ -228,5 +213,62 @@
       "positive_folds": 3
     }
   },
-  "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation_v2.py; python scripts/generate_submission_v2.py"
+  "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation_v2.py; python scripts/generate_submission_v2.py",
+  "slot_gate": {
+    "checked_utc": "2026-10-05",
+    "status": "CLOSED",
+    "approved_for_competition_submission": false,
+    "no_auto_upload": true,
+    "candidate": "gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48",
+    "candidate_status": "unique research artifact; local format checks pass; portal acceptance and hidden-fault skill are untested",
+    "reasons_closed": [
+      "No compatible, independently reproducible current-best spatial holdout checkpoint is available for GEMSDOE38.",
+      "The user-reported H33-2-B2 0.2778 mapping is not tied to an organizer-exposed file hash; GEMSDOE32's own holdout evidence has missing tracked inputs and conflicting logged/code fold settings.",
+      "GEMSDOE32's live-mirror receipt reproduced only 2 of 6 logged historical orderings (3 of 6 after its own prevalence calibration), so its proxy is not a promotion-grade benchmark.",
+      "The D raster's historical 19+D feature comparison used the incomplete public catalogue as a proxy and did not test the final 0.7%/3.0px/tip-protected emission and catalogue exclusion as an artifact-level model-vs-current-best comparison.",
+      "The preregistered J feature did not show a reliable incremental gain over the frozen D model: +0.000712 DTI, 2/4 folds positive, paired 20 km block bootstrap 95% interval [-0.004698, +0.006037] on the public catalogue proxy.",
+      "Final review found that the as-coded L variant differs from its registered signed side-contrast formula; its MINE values are exploratory only and no solo L spatial comparison was run.",
+      "Neither zero-outside nor NaN-outside encoding has been accepted by the competition portal; local disk-reread validation is not portal certification."
+    ],
+    "evidence": {
+      "d_zero_file_sha256": "8e0876bbe844ee118489993bc3fe67c3120181ffef9a0dc144c083fbb5a1f5cd",
+      "d_nan_file_sha256": "1c1fd7096880829d1693a262573522b2bb41a8eccdf22b03b3d8fdda1de99081",
+      "d_canonical_pixel_sha256": "ecfbf59e2b487400bd6a180ab745f1914619cff88afda3a2bbcdc54f4336e0d2",
+      "j_internal_proxy_test": "knowledge/validation-v3.json",
+      "l_implementation_review": "knowledge/hypotheses-v3-review-amendment.md",
+      "h33_public_evidence_review": "GEMSDOE32 commit b63ebab7dbcf9238422ebbc2dbc4addf84bed11b; findings summarized in knowledge/research-review.md"
+    },
+    "requirements_to_reopen": [
+      "Restore or regenerate exact versioned holdout data and confirm its hashes and split parameters against the current checked-in code.",
+      "Reproduce the prior H33/current-best raster and baseline on the same frozen spatial test cells, with all features, model fitting, emission policy, exclusion policy and paired uncertainty reported.",
+      "Use a genuinely held-out fault truth set or a clearly qualified independent analogue whose source data and provenance are available; do not treat unlabelled zero cells as verified negatives.",
+      "Pass the preregistered incremental candidate-vs-current-best gate without changing budget, spacing, collar or thresholds after seeing the result.",
+      "Keep submission encoding and organizer portal acceptance distinct from local TIFF validation; obtain an actual portal acceptance result before claiming certification."
+    ],
+    "decision": "Retain the unique TIFF as a clearly marked research/download artifact. Do not recommend or perform a weekly submission or final-round selection from the present evidence."
+  },
+  "historical_v2_catalogue_proxy_result_not_artifact_validation": {
+    "dti": 0.13952239501695607,
+    "terms": [
+      8078.654624110956,
+      37504.38133284635,
+      52903.34537588907
+    ],
+    "n_blocks": 181,
+    "delta_vs_baseline": 0.008073806739314376,
+    "paired_bootstrap_95": [
+      0.001093291161127586,
+      0.01549770789029271
+    ],
+    "positive_folds": 4
+  },
+  "research_status": {
+    "unique_raster": true,
+    "local_disk_format_checks_passed": true,
+    "portal_acceptance_tested": false,
+    "hidden_fault_score_available": false,
+    "current_best_comparable_holdout_available": false,
+    "weekly_slot_recommended": false,
+    "explanation": "The v2 feature proxy result does not test the final emitted raster against the historical H33/current-best detector on a reproducible compatible holdout. See knowledge/slot-gate.json."
+  }
 }
