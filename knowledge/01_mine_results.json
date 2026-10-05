@@ -1,0 +1,15 @@
+{
+  "method": "MINE - Belghazi et al. ICML 2018",
+  "paper": "https://arxiv.org/abs/1801.04062",
+  "implementation": "src/mine_estimator.py",
+  "synthetic_data": "N=20000, 1% positives, 5 candidate features",
+  "results": {
+    "mt_conductance_edge": {"mi": 0.04286, "mean_feature": 0.008, "decision": "KEEP"},
+    "gravity_gradient_worm": {"mi": 0.01028, "mean_feature": 0.046, "decision": "KEEP"},
+    "aster_clay_ratio": {"mi": 0.00199, "mean_feature": 0.008, "decision": "DROP near-zero"},
+    "random_noise": {"mi": 0.00024, "mean_feature": 0.004, "decision": "DROP"},
+    "knickpoint_density": {"mi": 0.00018, "mean_feature": 0.006, "decision": "DROP"}
+  },
+  "filter_rule": "MI <0.01 -> DROP, unlikely to earn back submission slot",
+  "ranked": ["mt_conductance_edge", "gravity_gradient_worm", "aster_clay_ratio", "random_noise", "knickpoint_density"]
+}
