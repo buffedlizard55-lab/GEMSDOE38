@@ -23,8 +23,13 @@ if __name__ == "__main__":
             np.save(out / (name + ".npy"), a)
             print(name, float(a[foot].min()), float(a[foot].max()), flush=True)
         # Compact rows aligned to footprint; NaNs kept for fold-local imputation.
+        from src.hypotheses import NAMES as H_NAMES
+
         X = np.lib.format.open_memmap(
-            out / "X.npy", mode="w+", dtype="float32", shape=(int(foot.sum()), 23)
+            out / "X.npy",
+            mode="w+",
+            dtype="float32",
+            shape=(int(foot.sum()), 19 + len(H_NAMES)),
         )
         for b in range(19):
             X[:, b] = s.read(b + 1, masked=True).filled(np.nan)[foot]

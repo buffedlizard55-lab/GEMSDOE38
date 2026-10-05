@@ -1,4 +1,16 @@
-# Scientific review and decision record — 2026-10-05
+# Scientific review and decision record — 2026-10-05 (updated 2026-10-05 v2)
+
+## v2 Update: validated D and new unique submission 2026-10-05
+
+**New MINE screen on 9 features (5.17M rows, 60,988 positives, H(Y)=0.064129 nats, 3 seeds, 12 OOF folds, shuffled nulls):** Full-fit mean nats — F_transtensional_corridor 0.00028387 (highest), D_topographic_step_proxy 0.00014835, I_drainage_deflection_curvature 0.00012835, E_basin_concealed_coedge 6.86e-05, G_quake_fabric_lineament 7.03e-05, H_rtp_tilt_basement_step 4.54e-05, A 1.70e-05, C 1.66e-05, B 1.20e-06. OOF weighted mean: D 0.00012556 (stable positive), I 0.00011102, H 3.54e-05, E 2.81e-05, G 1.17e-05, A 4.25e-06, C 9.09e-06, B -2.16e-05 (negative), F -7.31e-05 (negative, spatial overfit). Null means ~ -4e-07, so D and I are >300× null.
+
+**Validation v2 (same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation, 200k negatives, 180+ 20km blocks, 1000 bootstraps):** Baseline 0.13144859. plus_D 0.13952240 Δ+0.00807381 4/4 folds positive, 95% CI [0.00109,0.01549] excludes zero — **first feature to pass strict gate**. plus_I 0.13387 Δ+0.00242 3/4 CI crosses zero. plus_F 0.13491 Δ+0.00346 4/4 but CI crosses zero. plus_E -0.00040 1/4. plus_D_I 0.13864 Δ+0.00719 3/4 CI [-0.00074,0.01503] crosses zero slightly. plus_all_new 0.13642 Δ+0.00497 3/4.
+
+**Why this matters for the prompt's MINE instruction:** Full-label MINE filtered out B (near-zero) correctly — it failed validation. F had highest full-fit but negative OOF, warning of spatial overfit, and indeed its validation CI crosses zero despite 4/4 folds. D had highest stable OOF and passed validation, confirming MINE OOF as less noisy than single-number ablation on ~1% positives.
+
+**New submission:** Full-data HGB 19 + D_topographic_step_proxy, 0.7% density (36,171 px), 3.0px separation (vs 2.8), 200m catalogue exclusion with tip protection (retain within 3px of endpoints to preserve splay/tip corrections that H33's blind 200m prune would delete). No prior prediction as input. Pixel-content SHA ecfbf59e2b48, 71,947 pixels different vs H33 reference, 0 duplicates vs 208 same-grid prior rasters (254 paths, 210 blobs). Second candidate D+I 0.65% density also generated. Both have zero and nan outside twins, all-finite primary min 0 max 1, no nodata sentinel, passes local contracts. Portal acceptance not certified, but avoids known range failures (finite [0,1], no -3.4e38 sentinel, no NaN interior).
+
+**How to beat 0.2778 / 0.3262:** DTI = T / (0.2 T + 0.2 F + 0.8 G). Improvement requires (1-0.2D)ΔT > 0.2 D ΔF. At D=0.2778, 1 unit FP needs 0.05883 coverage. Thinning (121k→44k→37k) raised credit per pixel by removing redundant mass (H28 analysis: ρ 1.429→1.179). Our improvements: (1) better detector (D validated +0.008 catalogue-proxy), (2) better emission (3.0px reduces overlap, tip protection preserves high-value corrections), (3) lower density (0.7% vs 0.8%) raises mean credit. Leaderboard 0.3262 needs ~25% more credit per pixel than 0.26 at same mass — requires genuinely new faults, not just budget tuning. Catalogue-proxy +6% is not hidden-fault guarantee.
 
 ## Answer: why did H33-2-B2 reach the reported 0.2778?
 

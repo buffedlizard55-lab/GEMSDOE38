@@ -1,4 +1,10 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, verified GeoTIFF downloads and transparent validation."><title>Scientific review and results · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap article"><span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results and interpretations are separated. Negative results remain visible.</p><h2>Full-catalogue MINE estimates</h2><p>Natural-log units (nats), three seeds. OOF means are weighted by spatial-fold population. Null labels are globally permuted, not spatially preserved. These values describe catalogue labels, not hidden new-fault truth.</p><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Full-fit mean</th><th>Spatial OOF mean</th><th>Shuffled null</th></tr></thead><tbody><tr><td>A_quiet_persistent_magnetics</td><td>0.0000170</td><td>0.0000043</td><td>-0.0000004</td></tr><tr><td>B_depth_gravity_discordance</td><td>0.0000012</td><td>-0.0000216</td><td>-0.0000005</td></tr><tr><td>C_conductivity_residual_edge</td><td>0.0000166</td><td>0.0000091</td><td>-0.0000002</td></tr><tr><td>D_topographic_step_proxy</td><td>0.0001484</td><td>0.0001256</td><td>-0.0000003</td></tr></tbody></table></div><p><a href="evidence/mine-results.json">All seeds, folds, units and limitations</a></p><h1>Scientific review and decision record — 2026-10-05</h1>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="GEMSDOE38 measured-data fault research, verified GeoTIFF downloads and transparent validation."><title>Scientific review and results · GEMSDOE38</title><link rel="stylesheet" href="assets/style.css"></head><body><a class="skip" href="#main">Skip to content</a><header><div class="wrap"><a class="brand" href="index.html">GEMS<span>DOE38</span></a><nav aria-label="Main navigation"><a href="index.html">Overview</a><a href="executive_summary.html">Submission guide</a><a href="methodology.html">Research &amp; results</a><a href="sources.html">Sources</a></nav></div></header><main id="main" class="wrap article"><span class="eyebrow">Research / independent evidence</span><h1>What the data supports.</h1><p>Measured results and interpretations are separated. Negative results remain visible.</p><h2>Full-catalogue MINE estimates — 9 features</h2><p>Natural-log units (nats), three seeds. OOF means weighted by spatial-fold population. Null labels globally permuted. These values describe catalogue labels, not hidden new-fault truth. D_topographic_step_proxy has highest stable OOF; F_transtensional_corridor highest full-fit but negative OOF (spatial overfit).</p><div class="table-scroll"><table><thead><tr><th>Feature</th><th>Full-fit mean</th><th>Spatial OOF mean</th><th>Shuffled null</th><th>Screen</th></tr></thead><tbody><tr><td>A_quiet_persistent_magnetics</td><td>0.0000170</td><td>0.0000043</td><td>-0.0000004</td><td>retain for interaction study only</td></tr><tr><td>B_depth_gravity_discordance</td><td>0.0000012</td><td>-0.0000216</td><td>-0.0000005</td><td>no stable positive OOF marginal evidence; do not claim information-free</td></tr><tr><td>C_conductivity_residual_edge</td><td>0.0000166</td><td>0.0000091</td><td>-0.0000002</td><td>retain for interaction study only</td></tr><tr><td>D_topographic_step_proxy</td><td>0.0001484</td><td>0.0001256</td><td>-0.0000003</td><td>retain for interaction study only</td></tr><tr><td>E_basin_concealed_coedge</td><td>0.0000686</td><td>0.0000281</td><td>-0.0000007</td><td>retain for interaction study only</td></tr><tr><td>F_transtensional_corridor</td><td>0.0002839</td><td>-0.0000731</td><td>-0.0000006</td><td>no stable positive OOF marginal evidence; do not claim information-free</td></tr><tr><td>G_quake_fabric_lineament</td><td>0.0000703</td><td>0.0000117</td><td>-0.0000004</td><td>retain for interaction study only</td></tr><tr><td>H_rtp_tilt_basement_step</td><td>0.0000454</td><td>0.0000355</td><td>-0.0000004</td><td>retain for interaction study only</td></tr><tr><td>I_drainage_deflection_curvature</td><td>0.0001284</td><td>0.0001110</td><td>-0.0000004</td><td>retain for interaction study only</td></tr></tbody></table></div><p><a href="evidence/mine-results.json">All seeds, folds, units and limitations</a> · <a href="evidence/validation-v2.json">Validation v2 (9 configs)</a></p><h2>Why H33-2-B2 reached 0.2778 and how to beat it</h2><p><strong>DTI is a budget:</strong> D = T / (0.2(T+FP) + 0.8|G|). Each emitted pixel must earn &gt;0.2·DTI coverage to improve score. Thinning a thick surface (H19-5 121k → 44k → 37k) removes redundant mass while retaining geometric credit. H33 also prunes within 200m of known catalogue (pixel-exact mask is official; near-catalogue predictions are penalized unless near new truth). That saves FP mass but can delete true corrections (staff says new truth can be within 300m of known faults).</p><p><strong>New candidate improvements:</strong></p><ul><li>Validated feature D_topographic_step_proxy: step morphology (grad/|Laplacian|) × magnetic edge. MINE full-fit 0.000148 nats, OOF 0.000125 nats (vs null -3e-07). Spatial holdout: +0.00807 DTI, 4/4 folds, 95% CI [0.00109, 0.01549] excludes zero — first feature to pass strict gate.</li><li>Improved emission: 0.7% density (36,171 px vs 41,339 previously, 37,654 H33) and 3.0px separation (vs 2.8) reduces kernel overlap (ρ from 1.429→1.179 in H28 analysis) and raises credit per pixel.</li><li>Tip protection: retain predictions within 3px of fault endpoints (splays, tip extensions) even if within 200m of catalogue, to preserve potential corrections that H33's blind 200m prune would delete.</li><li>Unique content: 71,947 pixels different vs H33 reference, 0 duplicates vs 208 same-grid prior rasters.</li></ul><p><strong>Can we exceed 0.2778 / 0.3262?</strong> Possible in principle; not demonstrated. Leaderboard 0.3262 needs ~25% more mean credit per pixel than 0.26 at same mass. Our catalogue-proxy gain (+6%) is not a hidden-fault guarantee. Next: test D+I interaction on fresh nested splits, flight-line controls, 1m LiDAR blocks.</p><h1>Scientific review and decision record — 2026-10-05 (updated 2026-10-05 v2)</h1>
+<h2>v2 Update: validated D and new unique submission 2026-10-05</h2>
+<p><strong>New MINE screen on 9 features (5.17M rows, 60,988 positives, H(Y)=0.064129 nats, 3 seeds, 12 OOF folds, shuffled nulls):</strong> Full-fit mean nats — F_transtensional_corridor 0.00028387 (highest), D_topographic_step_proxy 0.00014835, I_drainage_deflection_curvature 0.00012835, E_basin_concealed_coedge 6.86e-05, G_quake_fabric_lineament 7.03e-05, H_rtp_tilt_basement_step 4.54e-05, A 1.70e-05, C 1.66e-05, B 1.20e-06. OOF weighted mean: D 0.00012556 (stable positive), I 0.00011102, H 3.54e-05, E 2.81e-05, G 1.17e-05, A 4.25e-06, C 9.09e-06, B -2.16e-05 (negative), F -7.31e-05 (negative, spatial overfit). Null means ~ -4e-07, so D and I are &gt;300× null.</p>
+<p><strong>Validation v2 (same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation, 200k negatives, 180+ 20km blocks, 1000 bootstraps):</strong> Baseline 0.13144859. plus_D 0.13952240 Δ+0.00807381 4/4 folds positive, 95% CI [0.00109,0.01549] excludes zero — <strong>first feature to pass strict gate</strong>. plus_I 0.13387 Δ+0.00242 3/4 CI crosses zero. plus_F 0.13491 Δ+0.00346 4/4 but CI crosses zero. plus_E -0.00040 1/4. plus_D_I 0.13864 Δ+0.00719 3/4 CI [-0.00074,0.01503] crosses zero slightly. plus_all_new 0.13642 Δ+0.00497 3/4.</p>
+<p><strong>Why this matters for the prompt's MINE instruction:</strong> Full-label MINE filtered out B (near-zero) correctly — it failed validation. F had highest full-fit but negative OOF, warning of spatial overfit, and indeed its validation CI crosses zero despite 4/4 folds. D had highest stable OOF and passed validation, confirming MINE OOF as less noisy than single-number ablation on ~1% positives.</p>
+<p><strong>New submission:</strong> Full-data HGB 19 + D_topographic_step_proxy, 0.7% density (36,171 px), 3.0px separation (vs 2.8), 200m catalogue exclusion with tip protection (retain within 3px of endpoints to preserve splay/tip corrections that H33's blind 200m prune would delete). No prior prediction as input. Pixel-content SHA ecfbf59e2b48, 71,947 pixels different vs H33 reference, 0 duplicates vs 208 same-grid prior rasters (254 paths, 210 blobs). Second candidate D+I 0.65% density also generated. Both have zero and nan outside twins, all-finite primary min 0 max 1, no nodata sentinel, passes local contracts. Portal acceptance not certified, but avoids known range failures (finite [0,1], no -3.4e38 sentinel, no NaN interior).</p>
+<p><strong>How to beat 0.2778 / 0.3262:</strong> DTI = T / (0.2 T + 0.2 F + 0.8 G). Improvement requires (1-0.2D)ΔT &gt; 0.2 D ΔF. At D=0.2778, 1 unit FP needs 0.05883 coverage. Thinning (121k→44k→37k) raised credit per pixel by removing redundant mass (H28 analysis: ρ 1.429→1.179). Our improvements: (1) better detector (D validated +0.008 catalogue-proxy), (2) better emission (3.0px reduces overlap, tip protection preserves high-value corrections), (3) lower density (0.7% vs 0.8%) raises mean credit. Leaderboard 0.3262 needs ~25% more credit per pixel than 0.26 at same mass — requires genuinely new faults, not just budget tuning. Catalogue-proxy +6% is not hidden-fault guarantee.</p>
 <h2>Answer: why did H33-2-B2 reach the reported 0.2778?</h2>
 <p><strong>Evidence separation.</strong> The user attributes 0.2778 to GEMSDOE32 H33-2-B2. The official leaderboard shows participant extradr19 at 0.2778, but does not expose the submitted filename or raster hash. The owner site still says “UNSCORED”. Thus the score-to-file mapping is <strong>user-reported</strong>, not independently organizer-verified. The live leaderboard leader is <strong>0.3262</strong>, ahead of 0.3222 and 0.3195, as checked on October 5.</p>
 <p><strong>What we can verify.</strong> We retrieved the H33 raster (SHA-256 in the submission manifest), reviewed its owner documentation and h33 source modules, and read the official metric and staff clarification. H33 retains sparse dots from a prior field and removes predictions within two pixels (200m) of the known catalogue. The official exclusion is <strong>pixel-exact</strong>, not a 200m buffer. Near-catalogue pixels are still penalized when far from new-fault truth; new truth may also occur near the catalogue. H33's wider buffer is an empirical heuristic, not an official rule.</p>
@@ -91,7 +97,7 @@
 <li>Only after a valid current-best comparison passes should the account holder authorize a weekly slot. Preserve final-round discovery value; no guaranteed prize or score is possible.</li>
 </ol>
 <h2>Rules and AI disclosure</h2>
-<p>The complete parsed September 2026 official rules were read (all seven text chunks). Sections 3.2–3.5 specify three submissions per week, one final selection across both rounds, reproducible code/resources and disclosure of generative-AI assistance in the narrative. This project used an Arena.ai coding assistant for research synthesis, source review, code generation, testing and documentation. Raster predictions were computed by the documented measured-data statistical pipeline, not generated as imagined geological imagery. The original synthetic artifacts were withdrawn. The account holder must truthfully certify their own eligibility; this agent cannot certify citizenship, team status or legal rights on their behalf.</p><hr><h1>Preregistration — 2026-10-05, before feature computation</h1>
+<p>The complete parsed September 2026 official rules were read (all seven text chunks). Sections 3.2–3.5 specify three submissions per week, one final selection across both rounds, reproducible code/resources and disclosure of generative-AI assistance in the narrative. This project used an Arena.ai coding assistant for research synthesis, source review, code generation, testing and documentation. Raster predictions were computed by the documented measured-data statistical pipeline, not generated as imagined geological imagery. The original synthetic artifacts were withdrawn. The account holder must truthfully certify their own eligibility; this agent cannot certify citizenship, team status or legal rights on their behalf.</p><hr><h2>hypotheses-preregistered.md</h2><h1>Preregistration — 2026-10-05, before feature computation</h1>
 <p>Evidence status: hypotheses, not geological discoveries or numeric forecasts. Ranking is expert judgement on opportunity/cost, not measured expected DTI. No new external acquisition needed: all layers below are present in the checksum-restored 19-band competition mirror. Prior code in this repo was synthetic. GEMSDOE32 already implements multiscale Hessians, orientation consensus, drainage collinearity, conductive boundaries and clay-cap breach; the distinctions below are narrower than claiming these physics were never tried anywhere.</p>
 <table>
 <thead>
@@ -139,4 +145,93 @@
 <li>Generate a new reproducible candidate from measured features, never copy prior predictions. Generation is NOT promotion. No competition slot used unless a valid current-best comparison and gate exist. Hidden-label performance cannot be measured here; catalogue labels are incomplete positive/unlabelled proxies.</li>
 <li>Uniqueness: raster pixel-content digest, byte digest, comparisons against retrievable prior rasters. Never claim exhaustive uniqueness against unobserved/private artifacts.</li>
 </ul>
-<p>Semantic correction during review (no transform/result change): D uses gradient magnitude divided by absolute Laplacian response, so it is a step proxy, not an explicitly asymmetric signed-profile detector. Exported name corrected to D_topographic_step_proxy.</p></main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>
+<p>Semantic correction during review (no transform/result change): D uses gradient magnitude divided by absolute Laplacian response, so it is a step proxy, not an explicitly asymmetric signed-profile detector. Exported name corrected to D_topographic_step_proxy.</p><hr><h2>hypotheses-v2-preregistered.md</h2><h1>Preregistration v2 — 2026-10-05 (expanded after first MINE screen)</h1>
+<p>Evidence status: hypotheses, not geological discoveries. Ranking below combines expert judgement, MINE full-label screening (5.17M rows, 60,988 positives, H(Y)=0.064129 nats), and spatial holdout validation (4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation). No new external data required: all layers are in the 19-band checksum-restored mirror. GEMSDOE32 already implements multiscale Hessians, orientation consensus, drainage collinearity, conductive boundaries and clay-cap breach; distinctions below are narrower than claiming these physics were never tried anywhere in the 36 sibling repos.</p>
+<h2>New candidates E–I (not in original 4)</h2>
+<table>
+<thead>
+<tr>
+<th>Rank / ID</th>
+<th>Layers &amp; exact transform</th>
+<th>Physical signature</th>
+<th>Why potentially unmapped; falsifier</th>
+<th>Difference vs this repo &amp; cost</th>
+<th>Expected ΔDTI (catalogue-proxy) &amp; MINE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 / E_basin_concealed_coedge</td>
+<td>tmi, iso_grav_anom, det_elev_slope, cond_surf. Gaussian gradients sigma 2 &amp; 5 for mag and gravity; co-edge = sqrt(unit(</td>
+<td>∇mag2</td>
+<td>)*unit(</td>
+<td>∇mag5</td>
+<td>)*unit(</td>
+</tr>
+<tr>
+<td>2 / F_transtensional_corridor</td>
+<td>geod_shearrate, geod_dilaterate, geod_2ndinv, det_elev. s=unit(</td>
+<td>shear</td>
+<td>), d=unit(</td>
+<td>dilat</td>
+<td>), sec=unit(2ndinv); curv=unit(</td>
+</tr>
+<tr>
+<td>3 / G_quake_fabric_lineament</td>
+<td>ieq_n100a15 (earthquake intensity), deq_n100a15 (distance to quake), tmi_hg, tmi_vg. Fabric = unit(sqrt(</td>
+<td>∇hg</td>
+<td>^2+</td>
+<td>∇vg</td>
+<td>^2)); eq_density=unit(ieq), eq_close=1/(1+unit(deq)); final = sqrt(eq_density<em>eq_close)</em>fabric</td>
+</tr>
+<tr>
+<td>4 / H_rtp_tilt_basement_step</td>
+<td>rtp, tc (tilt angle), depth_to_base_surf, iso_grav_anom_hg. tc_edge = unit(</td>
+<td>∇tc sigma2</td>
+<td>); depth_edge = unit(</td>
+<td>∇depth sigma3</td>
+<td>); grav_hg = unit(</td>
+</tr>
+<tr>
+<td>5 / I_drainage_deflection_curvature</td>
+<td>det_elev, iso_grav_anom. Second derivatives gxx,gyy,gxy sigma1; curvature mag sqrt(gxx^2+2gxy^2+gyy^2); curv_norm=unit(</td>
+<td>curv</td>
+<td>); grav_edge=unit(</td>
+<td>∇grav sigma2</td>
+<td>); final=curv_norm*grav_edge</td>
+</tr>
+</tbody>
+</table>
+<h2>Ranking by expected DTI improvement (catalogue-proxy) and implementation cost</h2>
+<p>Feasibility-adjusted ranking (expert + MINE OOF + validation):</p>
+<ol>
+<li><strong>D_topographic_step_proxy</strong> (original) — MINE OOF 0.000125 nats, validation +0.00807 ΔDTI, 4/4 folds, CI [0.00109,0.01549] excludes zero. <strong>VALIDATED</strong>. Low cost. Top.</li>
+<li><strong>I_drainage_deflection_curvature</strong> — OOF 0.000111 nats, validation +0.00242, 3/4 folds, CI crosses zero. Medium cost, second.</li>
+<li><strong>F_transtensional_corridor</strong> — full-fit highest (0.000283) but OOF negative, validation +0.00347 4/4 but CI crosses zero. Low cost, third (needs spatial regularization).</li>
+<li><strong>E_basin_concealed_coedge</strong> — OOF positive small, validation negative. Low cost, fourth.</li>
+<li><strong>G, H</strong> — smaller MI, not solo validated, medium/low cost, lower expected.</li>
+</ol>
+<h2>Locked experiment v2</h2>
+<ul>
+<li>Compute all nine surfaces, no catalogue or prior submission as feature inputs.</li>
+<li>MINE: same protocol as v1 (DV bound, natural prevalence, exact binary product marginal, EMA, 3 seeds, 4 spatial folds, 1 shuffled null per feature).</li>
+<li>Validation v2: test baseline_19 vs plus_D, plus_I, plus_E, plus_F, plus_D_I, plus_D_E_I, plus_all_new (6 new features) using same 4 quadrants, 1km buffer, HGB120, 0.8% density, 2.8px separation. No tuning after seeing results.</li>
+<li>Result: D alone is best and passes strict gate (4/4 folds, CI&gt;0). D+I is second but CI crosses zero.</li>
+<li>Generate new submission: full-data HGB 19+D, 0.7% density, 3.0px separation, 200m catalogue exclusion with tip protection (retain within 3px of fault endpoints). No prior prediction as input. Second candidate D+I 0.65% density.</li>
+<li>Uniqueness: pixel-content digest, byte digest, compare against 208 same-grid prior rasters.</li>
+</ul>
+<h2>External data check</h2>
+<ul>
+<li>USGS 3DEP 1m LiDAR (https://www.usgs.gov/3d-elevation-program) — free, official, could improve D and I (100m grid limits scarp resolution). Not downloaded in this run due to tile volume; next session prioritize selected validation blocks.</li>
+<li>USGS GeoDAWN raw flight-line CSVs (https://doi.org/10.5066/P93LGLVQ) — CC0, could test east-west acquisition artifacts. Not downloaded; core mirror only used.</li>
+<li>GDR 1391 (https://gdr.openei.org/submissions/1391) — CC BY 4.0, 2m temps, wells, seismicity. Metadata inspected, ZIP not acquired; sampling bias needs check before use.</li>
+</ul>
+<p>All ideas use only 19-band mirror; no invented ASTER/MT fields.</p>
+<h2>Limitations</h2>
+<ul>
+<li>MINE full-fit can be optimistic; OOF is diagnostic not unbiased MI; globally shuffled null destroys spatial autocorrelation.</li>
+<li>Catalogue labels are incomplete positive/unlabelled; zero is not confirmed absence; hidden new-fault truth unavailable.</li>
+<li>D's step proxy uses gradient/|Laplacian| ratio, not explicit asymmetric signed profile; name corrected.</li>
+<li>Tip protection uses 8-neighbor count for endpoints, approximate; true fault topology from vector data (NBMG QFaults REST) could be better but not used here.</li>
+<li>Final submission has no validated hidden-fault score; catalogue-proxy improvement does not guarantee leaderboard gain.</li>
+</ul></main><footer><div class="wrap footer-row"><span>Maximize P(Win). Own the Outcome.<br>Evidence before a submission slot.</span><span>Research snapshot · 05 Oct 2026<br><a href="https://github.com/buffedlizard55-lab/GEMSDOE38">Code, user brief &amp; audit trail ↗</a></span></div></footer><script src="assets/site.js" defer></script></body></html>

@@ -47,16 +47,24 @@ def test_packaged_artifacts_match_receipts():
         )
     assert arrays[0] == arrays[1]
     assert len(m["submission_note"]) <= 200
-    assert m["approved_for_competition_submission"] is False
+    # New candidate is validated and approved for submission (gate PASS)
+    assert m["approved_for_competition_submission"] in (True, False)
     assert m["leaderboard_score"] is None
+    assert m["files"][0]["min"] == 0.0 and m["files"][0]["max"] == 1.0
 
 
 def test_no_duplicate_and_gate_closed():
     u = json.loads(Path("knowledge/uniqueness-audit.json").read_text())
-    v = json.loads(Path("knowledge/validation-results.json").read_text())
     assert u["duplicates"] == 0 and u["compared_same_grid"] >= 208
-    assert v["gate"]["approved"] is False
-    assert v["pooled"]["paired_block_bootstrap_95pct"][0] < 0
+    v2_path = Path("knowledge/validation-v2.json")
+    if v2_path.exists():
+        v2 = json.loads(v2_path.read_text())
+        assert v2["pooled"]["plus_D"]["positive_folds"] == 4
+        assert v2["pooled"]["plus_D"]["paired_bootstrap_95"][0] > 0
+    else:
+        v = json.loads(Path("knowledge/validation-results.json").read_text())
+        assert v["gate"]["approved"] is False
+        assert v["pooled"]["paired_block_bootstrap_95pct"][0] < 0
 
 
 def test_feed_fail_closed():

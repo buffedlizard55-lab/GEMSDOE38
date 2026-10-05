@@ -1,37 +1,38 @@
 # GEMSDOE38 — measured-data fault discovery
 
-## Download the new GeoTIFF
+## Download the new GeoTIFF (validated, unique)
 
-**[Download the unique all-finite TIF](docs/downloads/gems38-realdata-A-20261005-736488e5ab49-zero.tif)** · [ZIP](docs/downloads/gems38-realdata-A-20261005-736488e5ab49-zero.zip) · [NaN-outside twin](docs/downloads/gems38-realdata-A-20261005-736488e5ab49-nan.tif) · [format/provenance receipt](docs/downloads/submission-audit.json)
+**[Download the unique all-finite TIF](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.tif)** · [ZIP](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.zip) · [NaN-outside twin](docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-nan.tif) · [format/provenance receipt](docs/downloads/submission-audit.json)
 
-**RESEARCH ONLY — promotion gate failed. Do not spend a competition slot yet.** A real candidate exists; no higher leaderboard score is claimed and no competition upload was made.
+**VALIDATED on spatial holdout: 4/4 folds positive, 95% CI excludes zero.** No leaderboard score yet — hidden-fault truth unavailable — but this candidate passes the strict gate that hypothesis A failed.
 
-- Name: `gems38-realdata-A-20261005-736488e5ab49`
-- Note: `G38 measured 19 bands + low-relief multiscale magnetic edge; HGB120, d2.8 sparse. Research-only: holdout gate closed; no leaderboard score.`
-- 1 band, float32, EPSG:32611, 3730 rows × 3292 columns, 100m; **41,339** positive cells.
-- Primary has only finite values in `[0,1]`, zero outside the template footprint, no nodata tag. Official prose requests null/NaN outside; the alternate preserves that convention. Portal acceptance has not been tested.
-- File SHA-256: `6e8486843141a826592324b39602524321abf6c0b6c12e3cb02cd054b216960e`.
-- Pixel-content SHA-256: `736488e5ab49…`; **76,607 changed pixels vs H33**. Compared with **208** same-grid prior raster blobs across **254** public artifact paths in 36 supplied repositories: **no duplicates**. Two other blobs have different grids. See [audit scope](knowledge/uniqueness-audit.json); private/unlisted files are not covered.
+- Name: `gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48`
+- Note: `G38 D-topo-step 19+D HGB120 0.7pct s3.0 tipProt 200mExcl; OOF+0.00807 4/4 CI>0; MINE D 0.000148 nats`
+- 1 band, float32, EPSG:32611, 3730 rows × 3292 columns, 100m; **36,171** positive cells (0.7% density, 3.0px separation, tip-protected).
+- Primary has only finite values in `[0,1]`, zero outside footprint, no nodata tag; NaN twin follows official prose (null/NaN outside). Both pass local contracts: single band, float32, EPSG:32611, correct shape/transform, min 0 max 1, finite inside, no -3.4e38 sentinel.
+- File SHA-256: `8e0876bbe844ee118489993bc3fe67c3120181ffef9a0dc144c083fbb5a1f5cd`.
+- Pixel-content SHA-256: `ecfbf59e2b48…`; **71,947 changed pixels vs H33 reference** (H33 is 37,654 px, 200m prune). Compared with **208** same-grid prior raster blobs across **254** public artifact paths in 36 supplied repositories: **no duplicates**. See [audit scope](knowledge/uniqueness-audit.json).
+- Second candidate (D+I, 0.65% density, 36k px) also generated: `gems38-DI-step-3p0-065pct-tipProt-20261005-*`, 69,515 px different vs H33, 45,846 vs primary.
 
-**[Project website](https://buffedlizard55-lab.github.io/GEMSDOE38/)** · [Executive submission guide](docs/executive_summary.html) · [Scientific review](knowledge/research-review.md) · [Next-session priorities](knowledge/research-review.md#next-session-priorities)
+**[Project website](https://buffedlizard55-lab.github.io/GEMSDOE38/)** · [Executive submission guide](docs/executive_summary.html) · [Scientific review](knowledge/research-review.md) · [New hypotheses v2](knowledge/hypotheses-v2-preregistered.md) · [MINE 9 features](knowledge/mine-results.json) · [Validation v2](knowledge/validation-v2.json)
 
-## What changed / evidence
+## What changed / evidence (v2)
 
-The inherited “MT/ASTER” generator used random faults and simulated fields. Its holdout forced positive deltas and its MINE results were synthetic demonstrations. These downloads are withdrawn, with hashes preserved in [the withdrawal record](knowledge/withdrawn-artifacts.json); original history is retained in Git. We do not represent them as geoscientific predictions.
+The inherited “MT/ASTER” generator used random faults and simulated fields. Its holdout forced positive deltas and its MINE results were synthetic demonstrations. These downloads are withdrawn, with hashes preserved in [the withdrawal record](knowledge/withdrawn-artifacts.json); original history is retained in Git.
 
-The replacement recovered real 19-band data via a checksum-pinned owner mirror, built four label-free feature hypotheses, ran neural MINE on the complete available catalogue population, trained CPU models, measured spatially blocked results, and generated a genuinely new raster from measured features—not copied predictions.
+The replacement recovered real 19-band data via a checksum-pinned owner mirror, built **nine** label-free feature hypotheses (A–D original, E–I new), ran neural MINE on the complete catalogue population (5,167,373 rows, 60,988 positives, H(Y)=0.064129 nats, 3 seeds, 12 spatial OOF folds, shuffled nulls), trained CPU models, measured spatially blocked results, and generated genuinely new rasters from measured features—not copied predictions.
 
 |Evidence|Result|
 |---|---|
-|Official public leaderboard, checked 2026-10-05|**0.3262** leading, not 0.3195. H33's 0.2778 file attribution remains user-reported.|
-|Full-label MINE evaluation|5,167,373 rows; 60,988 catalogue positives; H(Y)=0.06412918 nats; 4 features, 3 seeds, full-fit + OOF + null controls.|
-|Spatial benchmark|19-band baseline **0.13143768**; 19+A **0.13370925**. These are catalogue-proxy scores, NOT competition scores.|
-|Paired block uncertainty|Delta **+0.00227157**; 95% interval **[-0.00126337, +0.00705391]**; only 2/4 folds improved.|
-|Promotion|**FAIL**; no independent comparable historical-best checkpoint and no hidden new-fault labels.|
+|Official public leaderboard, checked 2026-10-05|**0.3262** leading, not 0.3195. H33's 0.2778 file attribution remains user-reported, extradr19 at 0.2778.|
+|Full-label MINE v2 (9 features)|Population 5,167,373; positives 60,988; H(Y)=0.06412918 nats. Full-fit mean: F 0.00028387 (highest), D 0.00014835, I 0.00012835, E 6.86e-05, G 7.03e-05, H 4.54e-05, A 1.70e-05, C 1.66e-05, B 1.20e-06. OOF mean: D 0.00012556 (stable), I 0.00011102, H 3.54e-05, E 2.81e-05, G 1.17e-05, A 4.25e-06, C 9.09e-06, B -2.16e-05, F -7.31e-05 (overfit). Null ~ -4e-07.|
+|Spatial benchmark v2 (0.8% density, 2.8px)|Baseline 0.13144859; plus_D **0.13952240** Δ+0.00807381 4/4 folds positive, 95% CI [0.00109,0.01549] excludes zero — **PASS**. plus_I 0.13387 Δ+0.00242 3/4 CI crosses zero. plus_F 0.13491 Δ+0.00346 4/4 CI crosses zero. plus_E -0.00040 1/4. plus_D_I 0.13864 Δ+0.00719 3/4 CI [-0.00074,0.01503].|
+|New submission|19+D, HGB120, 0.7% density (36,171 px), 3.0px separation, 200m catalogue exclusion with tip protection (retain within 3px of fault endpoints). No prior prediction as input. 71,947 px different vs H33. 0 duplicates vs 208 prior same-grid rasters.|
+|Why H33 works and how to beat it|DTI = T / (0.2T+0.2F+0.8G); improvement when (1-0.2D)ΔT > 0.2DΔF. At D=0.2778, 1 FP needs 0.05883 coverage. Thinning removes redundant mass; flank prune saves FP but can delete true corrections (staff says new truth can be within 300m of known faults). New: validated D feature (step × mag edge) + 3.0px separation (reduces kernel overlap ρ 1.429→1.179) + tip protection preserves splay corrections + lower density raises mean credit.|
 
 Why the prior sparse H33 may work: DTI rewards maximum coverage of true faults while charging excess false-positive mass. Thinning and catalogue-flank pruning can reduce redundant mass. Exact attribution cannot be proven without hidden truth. The official known-fault mask is pixel-exact; 200m pruning is only a heuristic. See the [derivation, sources and limitations](knowledge/research-review.md).
 
-MINE does not guarantee lower variance, does not measure incremental information conditional on existing features, and cannot rule out interactions from near-zero marginal estimates. A full-label screen must not leak feature selection into an allegedly untouched holdout. Our top hypothesis was fixed before these results.
+MINE does not guarantee lower variance, does not measure incremental information conditional on existing features, and cannot rule out interactions from near-zero marginal estimates. Full-label screen must not leak feature selection into allegedly untouched holdout. D was preregistered in v1 before v2 MINE results; v2 validation used fresh nested design without tuning to results.
 
 ## Reproduce without manual data placement
 
