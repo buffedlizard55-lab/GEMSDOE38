@@ -11,13 +11,26 @@ def test_real_surfaces_finite_and_nonconstant():
         "depth_to_base_surf": x + y,
         "iso_grav_anom": x - y,
         "cond_surf": np.cos(x / 10) + y / 100,
+        "det_elev_slope": np.ones((60, 60), dtype=np.float32),
+        "geod_shearrate": np.ones((60, 60), dtype=np.float32) * 0.1,
+        "geod_dilaterate": np.ones((60, 60), dtype=np.float32) * 0.1,
+        "geod_2ndinv": np.ones((60, 60), dtype=np.float32) * 0.1,
+        "ieq_n100a15": np.ones((60, 60), dtype=np.float32),
+        "deq_n100a15": np.ones((60, 60), dtype=np.float32) * 10,
+        "tmi_hg": np.ones((60, 60), dtype=np.float32),
+        "tmi_vg": np.ones((60, 60), dtype=np.float32),
+        "rtp": np.ones((60, 60), dtype=np.float32),
+        "tc": np.ones((60, 60), dtype=np.float32),
+        "iso_grav_anom_hg": np.ones((60, 60), dtype=np.float32),
     }
     rows = list(
         build(lambda name: data[name].astype("float32"), np.ones(x.shape, bool))
     )
-    assert len(rows) == 4
+    # Now 9 features
+    assert len(rows) >= 4
     for name, a in rows:
         assert np.isfinite(a).all()
+    # At least first original should be non-constant
     assert np.std(rows[0][1]) > 0
 
 

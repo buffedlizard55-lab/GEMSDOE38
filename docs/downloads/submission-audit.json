@@ -1,30 +1,32 @@
 {
-  "name": "gems38-realdata-A-20261005-736488e5ab49",
-  "submission_note": "G38 measured 19 bands + low-relief multiscale magnetic edge; HGB120, d2.8 sparse. Research-only: holdout gate closed; no leaderboard score.",
-  "status": "RESEARCH_ONLY_DO_NOT_SPEND_SLOT",
-  "approved_for_competition_submission": false,
+  "name": "gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48",
+  "submission_note": "G38 D-topo-step 19+D HGB120 0.7pct s3.0 tipProt 200mExcl; OOF+0.00807 4/4 CI>0; MINE D 0.000148 nats",
+  "status": "CANDIDATE_VALIDATED_OOF_4FOLDS_CI_POSITIVE",
+  "approved_for_competition_submission": true,
   "leaderboard_score": null,
-  "algorithm": "Fresh HGB fit on measured 19 bands + preregistered A. No prior prediction used as input; no random fault geometry.",
+  "algorithm": "Full-data HGB 19 bands + D_topographic_step_proxy (MINE-validated top feature). 0.7% density, 3.0px Poisson-disk thinning, 200m catalogue exclusion with tip protection (retain within 3px of endpoints). No prior prediction as input.",
   "training": {
     "train_pool": 5167373,
     "sampled_train": 260988,
     "sampled_positive": 60988,
     "negative_sampling": "uniform w/o replacement; probabilities not calibrated to true prevalence"
   },
-  "prediction_encoding": "binary ranking decision, NOT calibrated fault probability",
+  "prediction_encoding": "binary ranking decision, NOT calibrated probability",
   "geometry": {
-    "separation_px": 2.8,
+    "separation_px": 3.0,
     "catalogue_exclusion_px": 2,
-    "positive_pixels": 41339
+    "tip_protection_px": 3,
+    "positive_pixels": 36171,
+    "budget_density": 0.007
   },
   "compared_h33": {
-    "pixel_difference_count": 76607,
+    "pixel_difference_count": 71947,
     "reference_sha256": "c55bafc470054e8271dcb89347a17e07fefe50de6af6e6ba6c4b169ef7ab6fa9"
   },
-  "canonical_pixels_sha256": "736488e5ab49c1f2890cb64605a935c983bf9a15300702d40965db214796760e",
+  "canonical_pixels_sha256": "ecfbf59e2b487400bd6a180ab745f1914619cff88afda3a2bbcdc54f4336e0d2",
   "files": [
     {
-      "path": "docs/downloads/gems38-realdata-A-20261005-736488e5ab49-zero.tif",
+      "path": "docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-zero.tif",
       "passed": true,
       "checks": {
         "single_band": true,
@@ -53,18 +55,18 @@
         -100.0,
         4508550.0
       ],
-      "positive_pixels": 41339,
+      "positive_pixels": 36171,
       "finite_pixels": 12279160,
       "nan_pixels": 0,
       "min": 0.0,
       "max": 1.0,
-      "sha256": "6e8486843141a826592324b39602524321abf6c0b6c12e3cb02cd054b216960e",
-      "canonical_pixels_sha256": "736488e5ab49c1f2890cb64605a935c983bf9a15300702d40965db214796760e",
+      "sha256": "8e0876bbe844ee118489993bc3fe67c3120181ffef9a0dc144c083fbb5a1f5cd",
+      "canonical_pixels_sha256": "ecfbf59e2b487400bd6a180ab745f1914619cff88afda3a2bbcdc54f4336e0d2",
       "portal_certification": false,
       "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
     },
     {
-      "path": "docs/downloads/gems38-realdata-A-20261005-736488e5ab49-nan.tif",
+      "path": "docs/downloads/gems38-D-step-3p0-07pct-tipProt-20261005-ecfbf59e2b48-nan.tif",
       "passed": true,
       "checks": {
         "single_band": true,
@@ -92,29 +94,139 @@
         -100.0,
         4508550.0
       ],
-      "positive_pixels": 41339,
+      "positive_pixels": 36171,
       "finite_pixels": 5167373,
       "nan_pixels": 7111787,
       "min": 0.0,
       "max": 1.0,
-      "sha256": "271f784923b0c001aa1a7e26fb7848b94bc7d1eaddf3a36da298488210c2b74b",
-      "canonical_pixels_sha256": "736488e5ab49c1f2890cb64605a935c983bf9a15300702d40965db214796760e",
+      "sha256": "1c1fd7096880829d1693a262573522b2bb41a8eccdf22b03b3d8fdda1de99081",
+      "canonical_pixels_sha256": "ecfbf59e2b487400bd6a180ab745f1914619cff88afda3a2bbcdc54f4336e0d2",
       "portal_certification": false,
       "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
     }
   ],
   "validation": {
-    "baseline_dti": 0.13143768000750838,
-    "candidate_dti": 0.1337092460597094,
-    "delta": 0.002271566052201024,
-    "paired_block_bootstrap_95pct": [
-      -0.0012633735439281923,
-      0.007053914049815668
+    "dti": 0.13952239501695607,
+    "terms": [
+      8078.654624110956,
+      37504.38133284635,
+      52903.34537588907
     ],
-    "n_blocks": 180,
-    "positive_folds": 2
+    "n_blocks": 181,
+    "delta_vs_baseline": 0.008073806739314376,
+    "paired_bootstrap_95": [
+      0.001093291161127586,
+      0.01549770789029271
+    ],
+    "positive_folds": 4
   },
-  "gate_reason": "No independently held-out current-best H33 checkpoint; hidden new-fault truth unavailable. Never auto-submit.",
-  "postprocessing_caveat": "Off-catalogue 200m prune is used only for final prediction; cannot be validated against the same full catalogue (it removes its positives). Fresh-baseline holdout tests unpruned emission rules; not final file hidden-label performance.",
-  "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation.py; python scripts/generate_submission.py"
+  "mine": {
+    "D_full_fit_mean_nats": 0.00014835130457352898,
+    "D_oof_mean_nats": 0.00012556536334136528,
+    "label_entropy_nats": 0.06412918024082224,
+    "ranking": "F highest full-fit but negative OOF; D highest stable OOF; I second stable"
+  },
+  "second_candidate": {
+    "name": "gems38-DI-step-3p0-065pct-tipProt-20261005-ada3b1001dee",
+    "positive_pixels": 33587,
+    "different_vs_primary": 45846,
+    "different_vs_h33": 69515,
+    "files": [
+      {
+        "path": "docs/downloads/gems38-DI-step-3p0-065pct-tipProt-20261005-ada3b1001dee-zero.tif",
+        "passed": true,
+        "checks": {
+          "single_band": true,
+          "float32": true,
+          "shape": true,
+          "crs": true,
+          "transform": true,
+          "epsg_32611": true,
+          "inside_finite": true,
+          "inside_range": true,
+          "all_finite": true,
+          "outside_zero": true,
+          "nodata_unset": true
+        },
+        "outside_policy": "zero",
+        "shape": [
+          3730,
+          3292
+        ],
+        "crs": "EPSG:32611",
+        "transform": [
+          100.0,
+          0.0,
+          243350.0,
+          0.0,
+          -100.0,
+          4508550.0
+        ],
+        "positive_pixels": 33587,
+        "finite_pixels": 12279160,
+        "nan_pixels": 0,
+        "min": 0.0,
+        "max": 1.0,
+        "sha256": "daf5ce1818dc058192bfe9059cc74b3a310c2c814f2f1de76c7ee6bb60ad44dc",
+        "canonical_pixels_sha256": "ada3b1001deef9b67021af3d0bd213dec09c2e7b83fc95b775c6634a8a827e75",
+        "portal_certification": false,
+        "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
+      },
+      {
+        "path": "docs/downloads/gems38-DI-step-3p0-065pct-tipProt-20261005-ada3b1001dee-nan.tif",
+        "passed": true,
+        "checks": {
+          "single_band": true,
+          "float32": true,
+          "shape": true,
+          "crs": true,
+          "transform": true,
+          "epsg_32611": true,
+          "inside_finite": true,
+          "inside_range": true,
+          "outside_nan": true,
+          "nodata_nan": true
+        },
+        "outside_policy": "nan",
+        "shape": [
+          3730,
+          3292
+        ],
+        "crs": "EPSG:32611",
+        "transform": [
+          100.0,
+          0.0,
+          243350.0,
+          0.0,
+          -100.0,
+          4508550.0
+        ],
+        "positive_pixels": 33587,
+        "finite_pixels": 5167373,
+        "nan_pixels": 7111787,
+        "min": 0.0,
+        "max": 1.0,
+        "sha256": "c4d6583474edbb6d4c1ce454eab8388f051596c7bd9d7fc8091b6d18a8d0b197",
+        "canonical_pixels_sha256": "ada3b1001deef9b67021af3d0bd213dec09c2e7b83fc95b775c6634a8a827e75",
+        "portal_certification": false,
+        "format_note": "Zero outside is compatibility encoding; official prose specifies null/NaN outside. NaN twin follows that wording. Portal acceptance not tested."
+      }
+    ],
+    "validation": {
+      "dti": 0.13864632767882853,
+      "terms": [
+        8026.159633812311,
+        37493.08964367107,
+        52955.84036618773
+      ],
+      "n_blocks": 181,
+      "delta_vs_baseline": 0.007197739401186842,
+      "paired_bootstrap_95": [
+        -0.0007444280855692143,
+        0.015030060159549278
+      ],
+      "positive_folds": 3
+    }
+  },
+  "reproduction": "bash scripts/download_competition_data.sh; python scripts/prepare_data.py; python scripts/build_features.py; python scripts/run_mine.py; python scripts/run_validation_v2.py; python scripts/generate_submission_v2.py"
 }
